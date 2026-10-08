@@ -15,11 +15,11 @@ colors:
   inverse-on-surface: '#edf0ff'
   outline: '#747686'
   outline-variant: '#c4c5d7'
-  surface-tint: '#2151da'
-  primary: '#0037b0'
+  surface-tint: '#1d4ed8'
+  primary: '#1d4ed8'
   on-primary: '#ffffff'
-  primary-container: '#1d4ed8'
-  on-primary-container: '#cad3ff'
+  primary-container: '#dbeafe'
+  on-primary-container: '#001551'
   inverse-primary: '#b7c4ff'
   secondary: '#006c4a'
   on-secondary: '#ffffff'
@@ -220,7 +220,7 @@ Used when warranty coverage has ended.
 
 The application uses a very light neutral background:
 
-**App background:** `#F8F9FA`
+**App background:** `#F9F9FF`
 
 Cards and primary content surfaces use:
 
@@ -228,7 +228,7 @@ Cards and primary content surfaces use:
 
 Secondary structural areas may use:
 
-**Secondary surface:** `#F1F3F5`
+**Secondary surface:** `#F1F3FF`
 
 Do not use large areas of saturated color as backgrounds.
 
@@ -238,7 +238,7 @@ Do not use large areas of saturated color as backgrounds.
 
 ### Primary text
 
-`#111827`
+`#141B2B`
 
 Used for:
 
@@ -249,7 +249,7 @@ Used for:
 
 ### Secondary text
 
-`#6B7280`
+`#434655`
 
 Used for:
 
@@ -261,7 +261,7 @@ Used for:
 
 ### Tertiary text
 
-`#9CA3AF`
+`#747686`
 
 Used for:
 
@@ -420,7 +420,7 @@ Cards are one of the main visual components of Warranty Tracker.
 ### Card appearance
 
 * Background: `#FFFFFF`
-* Border: `1px solid #E5E7EB`
+* Border: `1px solid #C4C5D7`
 * Radius: `16px`
 * Internal padding: `16px`
 
@@ -503,8 +503,8 @@ Examples:
 ## Secondary Button
 
 * Background: `#FFFFFF`
-* Border: `1px solid #E5E7EB`
-* Text: `#111827`
+* Border: `1px solid #C4C5D7`
+* Text: `#141B2B`
 * Radius: `12px`
 * Minimum height: `48px`
 
@@ -551,7 +551,7 @@ Input fields should be simple and highly readable.
 ### Default
 
 * Background: `#FFFFFF`
-* Border: `1px solid #E5E7EB`
+* Border: `1px solid #C4C5D7`
 * Radius: `12px`
 * Horizontal padding: `16px`
 * Minimum height: approximately `48px`
@@ -563,7 +563,7 @@ Input fields should be simple and highly readable.
 
 ### Error
 
-* Border: `#DC2626`
+* Border: `#BA1A1A`
 * Error message below the field
 * Do not rely exclusively on the red border
 

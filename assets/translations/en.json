@@ -1,0 +1,16 @@
+{
+  "app": {
+    "name": "Warranty Tracker"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm"
+  },
+  "shell": {
+    "home": "Home",
+    "products": "Products",
+    "settings": "Settings"
+  }
+}
