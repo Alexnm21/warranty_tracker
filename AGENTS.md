@@ -477,18 +477,21 @@ New folders should represent a meaningful architectural or domain boundary.
 When implementing a new feature:
 
 1. Understand the requested behavior.
-2. Check `AGENTS.md`.
-3. Check `ARCHITECTURE.md`.
-4. Check `DATA_MODEL.md` when data is involved.
-5. Check `DESIGN.md` for UI work.
-6. Check `ROADMAP.md` to understand the current project scope.
-7. Inspect existing code for reusable patterns.
-8. Plan the required changes.
-9. Implement the smallest complete solution.
-10. Run formatting and analysis.
-11. Run relevant tests.
-12. Review the implementation for unnecessary complexity.
-13. Report any architectural decisions or new dependencies.
+2. Check `docs/plans/README.md` for the active plan and continue from its current state.
+3. Check `AGENTS.md`.
+4. Check `ARCHITECTURE.md`.
+5. Check `DATA_MODEL.md` when data is involved.
+6. Check `DESIGN.md` for UI work.
+7. Check `ROADMAP.md` to understand the current project scope.
+8. Inspect existing code for reusable patterns.
+9. Plan the required changes.
+10. Implement the smallest complete solution.
+11. Run formatting and analysis.
+12. Run relevant tests.
+13. Review the implementation for unnecessary complexity.
+14. Report any architectural decisions or new dependencies.
+
+Update plan checkboxes and statuses as work progresses. Plans are execution aids; source-of-truth documents (`ROADMAP.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `DESIGN.md`) always win.
 
 Do not start by creating files blindly.
 
