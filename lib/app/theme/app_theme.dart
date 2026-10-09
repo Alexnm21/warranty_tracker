@@ -61,8 +61,11 @@ abstract final class AppTheme {
       scaffoldBackgroundColor: AppColors.background,
       textTheme: textTheme,
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.surfaceContainerLow,
-        indicatorColor: AppColors.primaryContainer,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        indicatorColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
