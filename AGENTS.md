@@ -617,7 +617,21 @@ Do not consider a task complete merely because the code compiles.
 
 ---
 
-# 28. Final Rule
+# 28. Phase Development Workflow
+
+When developing a phase from a plan (e.g. `docs/plans/*.md`), follow these rules strictly:
+
+1. **Break into steps**: Split the plan into small, verifiable steps. For each step, present a clear list of files to create/modify and the exact changes you will make.
+2. **Get approval first**: Before executing any code changes for a step, show the proposed changes and wait for explicit approval ("ok", "go", "yes", "aprobado", etc.). Do not proceed until approved.
+3. **Execute one step at a time**: Implement only the approved step. After implementation, summarize what was done and verify (format/analyze relevant checks). Do not move to next step without approval.
+4. **Keep scope minimal**: Only do what is listed in the current approved step. Avoid refactoring unrelated code.
+5. **Update the plan**: After completing an approved step, mark the corresponding checklist items as `[x]` in the plan file.
+6. **Verify quality**: For each step that produces code, run `dart format .` and relevant `flutter analyze` checks. Run tests if the step affects logic.
+7. **Respect plan/roadmap**: Plans are execution aids; `ROADMAP.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `DESIGN.md` are source of truth.
+
+---
+
+# 29. Final Rule
 
 When in doubt:
 

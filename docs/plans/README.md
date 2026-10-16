@@ -18,7 +18,8 @@ development phase, so any future session can resume without re-planning.
 
 | Plan | Status |
 | ---- | ------ |
-| [Phase 0 — Project Foundation](01-phase-0-foundation.md) | pending |
+| [Phase 0 — Project Foundation](01-phase-0-foundation.md) | done |
+| [Phase 1 — Core Product & Warranty Management](02-phase-1-core-product-warranty-management.md) | active |
 
 ## Rules
 
