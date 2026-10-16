@@ -6,7 +6,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "edit": "Edit"
   },
   "shell": {
     "home": "Home",
@@ -41,6 +42,8 @@
       "serialNumber": "Serial number",
       "notes": "Notes",
       "warranty": "Warranty",
+      "warrantyStartDate": "Warranty start",
+      "warrantyEndDate": "Warranty end",
       "notFound": "Product not found"
     },
     "form": {

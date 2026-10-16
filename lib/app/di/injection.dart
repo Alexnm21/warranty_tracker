@@ -4,6 +4,8 @@ import '../../core/database/app_database.dart';
 import '../../features/products/data/daos/product_dao.dart';
 import '../../features/products/data/repositories/product_repository_impl.dart';
 import '../../features/products/domain/repositories/product_repository.dart';
+import '../../features/products/presentation/bloc/product_detail_cubit.dart';
+import '../../features/products/presentation/bloc/product_form_cubit.dart';
 import '../../features/products/presentation/bloc/product_list_cubit.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -21,5 +23,13 @@ void setupInjection({AppDatabase? database}) {
 
   getIt.registerFactory<ProductListCubit>(
     () => ProductListCubit(getIt<ProductRepository>()),
+  );
+  getIt.registerFactoryParam<ProductDetailCubit, int, void>(
+    (productId, _) => ProductDetailCubit(getIt<ProductRepository>(), productId),
+  );
+
+  getIt.registerFactoryParam<ProductFormCubit, int?, void>(
+    (productId, _) =>
+        ProductFormCubit(getIt<ProductRepository>(), productId: productId),
   );
 }

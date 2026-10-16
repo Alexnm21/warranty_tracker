@@ -42,6 +42,26 @@ class _ProductListContent extends StatefulWidget {
 class _ProductListContentState extends State<_ProductListContent> {
   final TextEditingController _searchController = TextEditingController();
 
+  /// Whether this route was current at the last dependency change.
+  ///
+  /// Starts as `true` because the cubit is loaded by `BlocProvider` on the
+  /// first build, so only later re-entries need a reload.
+  bool _wasCurrent = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCurrent = ModalRoute.isCurrentOf(context) ?? true;
+    if (!isCurrent) {
+      _wasCurrent = false;
+    } else if (!_wasCurrent) {
+      _wasCurrent = true;
+      // A nested screen (create/edit/detail) was popped and may have changed
+      // the data, so the list has to be reloaded.
+      context.read<ProductListCubit>().load();
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();

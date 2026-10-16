@@ -6,7 +6,8 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "edit": "Editar"
   },
   "shell": {
     "home": "Inicio",
@@ -41,6 +42,8 @@
       "serialNumber": "Número de serie",
       "notes": "Notas",
       "warranty": "Garantía",
+      "warrantyStartDate": "Inicio de garantía",
+      "warrantyEndDate": "Fin de garantía",
       "notFound": "Producto no encontrado"
     },
     "form": {

@@ -61,11 +61,11 @@ Create `lib/features/products/presentation/` with pages, widgets, blocs/cubits.
   - Page: `pages/product_list_page.dart`  
   - Cubit/Bloc: `bloc/product_list_cubit.dart` (or bloc). Load all, search, delete with confirmation.  
   - Widgets: `widgets/product_card.dart`, `widgets/empty_products.dart`, `widgets/warranty_status_pill.dart`
-- [ ] **Product Detail**  
+- [x] **Product Detail**  
   - Page: `pages/product_detail_page.dart`  
-  - Cubit: `bloc/product_detail_cubit.dart`  
-  - Show all fields + derived `warrantyStatus` with clear visual state
-- [ ] **Product Form (Create/Edit)**  
+  - Cubit: `bloc/product_detail_cubit.dart` (loading/loaded/notFound/error)  
+  - Shows all fields + derived `warrantyStatus` with clear visual state; edit/delete actions (delete confirmed). `_Section`/`_DetailRow` render only present fields.
+- [x] **Product Form (Create/Edit)**  
   - Page: `pages/product_form_page.dart` (shared)  
   - Cubit: `bloc/product_form_cubit.dart` with validation  
   - Fields: name (required), brand, model, store, purchase date, price+currency, serial, warranty start/end, notes
@@ -96,22 +96,28 @@ Create `lib/features/products/presentation/` with pages, widgets, blocs/cubits.
 
 Focus on behavior: business logic + important flows.
 
-- [ ] **Unit tests — WarrantyStatus**  
+- [x] **Unit tests — WarrantyStatus**  
   Test `fromDates` for: future, active (today between), expired, boundary cases.
-- [ ] **Unit tests — Mappers**  
-  Row <-> entity mapping.
-- [ ] **BLoC/Cubit tests**  
-  ProductList, ProductForm state transitions (valid/invalid, success/error).
-- [ ] **Widget tests**  
-  ProductCard, EmptyProducts (minimal but meaningful).
-- [ ] **Regression**  
-  Run existing tests: `flutter test`
+- [x] **Unit tests — Mappers**  
+  Row <-> entity mapping (`toEntity`, `toRow`, `toInsertCompanion`).
+- [x] **BLoC/Cubit tests**  
+  ProductList, ProductDetail and ProductForm state transitions (valid/invalid, success/error) via a manual `FakeProductRepository`. Also `parsePrice` unit tests.
+- [x] **Widget tests**  
+  ProductCard, EmptyProducts (minimal but meaningful), using a `pumpLocalized` helper.
+- [x] **Integration test**  
+  `integration_test/product_flow_test.dart` runs the full flow on the iOS
+  simulator (create → list → detail → edit → search → delete → empty) against an
+  in-memory database. Added `integration_test` (Flutter SDK package, no
+  third-party dependency). It also serves as the regression test for the
+  list-refresh bug fixed in Step 7 (see Decisions).
+- [x] **Regression**  
+  Run existing tests: `flutter test` (57 tests pass).
 
 ## 7) Quality & Verification
 
-- [ ] **Format**: `dart format .`
-- [ ] **Analyze**: `flutter analyze` — 0 new errors/warnings unless justified
-- [ ] **Tests pass**: `flutter test`
+- [x] **Format**: `dart format .`
+- [x] **Analyze**: `flutter analyze` — 0 new errors/warnings unless justified
+- [x] **Tests pass**: `flutter test` (57 unit/widget) + `flutter test integration_test` (1) on the iOS simulator
 - [ ] **Manual smoke test**  
   Flow: create → list shows → detail → edit → delete → search → empty state
 - [ ] **Offline check**  
@@ -175,3 +181,52 @@ Application allows managing products and understanding warranty status offline. 
   `flutter analyze` is now fully clean.
 - **Detail/Form pages are stubs** in Step 4 (they render an empty `Scaffold`);
   Steps 5–6 implement them. The routes and DI are already wired.
+- **`formatPrice` helper** (`core/utils/price_format.dart`) added in Step 5 to
+  render minor-unit prices; the form (Step 6) will add the reverse parse there.
+- **`ProductDetailCubit` uses `registerFactoryParam<ProductDetailCubit, int, void>`**
+  in DI, so the page builds it with the route's product id (`getIt(param1: id)`).
+- **New i18n keys** in Step 5: `common.edit`, `products.detail.warrantyStartDate`,
+  `products.detail.warrantyEndDate` (en + es).
+- **Form validation lives in the cubit** (`ProductFormCubit._validate`) instead
+  of `Form`/`TextFormField` validators, so the business rules are unit-testable
+  and there is a single source of truth. Error values in the state are i18n keys
+  rendered as `InputDecoration.errorText`. Rules follow `FIELD_REQUIREMENTS.md`:
+  name/purchase/warranty-start/warranty-end required, end >= start, price
+  non-negative, currency required when price is set.
+- **New products default to `EUR`** (`FIELD_REQUIREMENTS.md` §11).
+- **After a successful save the form navigates to the product list** (rather than
+  popping): it keeps the flow predictable and guarantees the list is showing
+  fresh data.
+- **Bug fixed in Step 7 — the product list did not refresh**: `/products/new`
+  and `/products/:id` are nested routes, so `ProductListPage` and its
+  `ProductListCubit` survive navigation and `BlocProvider(create:)` never
+  re-ran (the list kept showing "No products yet" after a successful create).
+  Fixed in `_ProductListContentState` with `ModalRoute.isCurrentOf(context)`,
+  which reloads the cubit when the route becomes current again after a nested
+  screen is popped. No reload on ordinary rebuilds (search typing, keyboard),
+  and no new dependency. The integration test is the regression test: it fails
+  without the fix.
+- **`parsePrice`** added to `core/utils/price_format.dart` (reverse of
+  `formatPrice`); accepts `.` or `,` decimals and returns minor units.
+- **`ProductFormStatus` distinguishes `loadError` from `saveError`** so a failed
+  save shows a snackbar instead of replacing the form (and losing input).
+- **Suggest extraction**: the error/retry state is now duplicated as private
+  widgets in the list, detail and form pages; it could become a shared
+  `core/widgets/error_state.dart`. Left as-is to keep step scope minimal.
+- **Testing uses a manual `FakeProductRepository`** (`test/.../fakes/`) instead
+  of `mockito`/`bloc_test`, to avoid new dependencies (AGENTS.md §18). Cubits are
+  exercised by driving them directly.
+- **`pumpLocalized` test helper** (`test/helpers/`) wraps widgets in
+  `EasyLocalization` + `MaterialApp` using the app's own
+  `context.localizationDelegates`. Two gotchas: (1) the delegates must include
+  `GlobalMaterialLocalizations`, otherwise `intl` date symbols for bare `en`/`es`
+  are not initialized and `DateFormat` throws; (2) the pump must run inside
+  `tester.runAsync` so the real async asset load completes (the fake-async zone
+  does not drive it reliably across multiple tests).
+  - No new dependency was needed: the app already passes
+    `context.localizationDelegates`, so `formatDate` works at runtime.
+- **`formatDate` requires `GlobalMaterialLocalizations`**: it formats with
+  `context.locale.toString()` (`en`/`es`), which needs date symbols initialized
+  by `flutter_localizations` (provided transparently by easy_localization's
+  delegates). If Material localizations are ever removed, `DateFormat` will
+  throw.
