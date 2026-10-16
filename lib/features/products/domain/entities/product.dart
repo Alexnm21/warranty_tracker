@@ -24,7 +24,7 @@ class Product {
   final String? model;
   final String? store;
   final DateTime? purchaseDate;
-  final double? price;
+  final int? price;
   final String? currency;
   final String? serialNumber;
   final DateTime? warrantyStartDate;
@@ -44,7 +44,7 @@ class Product {
     String? model,
     String? store,
     DateTime? purchaseDate,
-    double? price,
+    int? price,
     String? currency,
     String? serialNumber,
     DateTime? warrantyStartDate,

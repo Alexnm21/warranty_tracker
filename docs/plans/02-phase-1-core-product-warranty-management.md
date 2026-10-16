@@ -42,18 +42,16 @@ Create `lib/features/products/domain/` following Clean Architecture.
 
 Create `lib/features/products/data/` with tables, DAOs, mappers, data sources, repository impl.
 
-- [ ] **Drift table: products**  
-  Create table in Drift (e.g. `products_table.dart` or inside database file). Include all fields from Product. Use `IntColumn` for id (auto-increment or uuid? follow existing DB conventions). Store dates as `DateTime` or `Text` consistently with existing schema.
-- [ ] **DAO / data source**  
-  Implement queries: all, byId, insert, update, delete, search (by name/brand/model/serial/store).  
-  Keep DB-specific code inside data layer only.
-- [ ] **DTO/Model mapping**  
-  Create mapper `mappers/product_mapper.dart` to map DB row <-> domain entity.  
-  Domain must not depend on Drift types.
-- [ ] **Repository implementation**  
-  Create `repositories/product_repository_impl.dart` implementing `ProductRepository`. Convert infra errors appropriately (follow existing error handling).
-- [ ] **Register in DI**  
-  Wire repository, data source, use cases in `lib/app/di/`.
+- [x] **Drift table: products**  
+  Created `lib/core/database/tables/products_table.dart` (per `ARCHITECTURE.md` §21: shared tables live in `core/database/tables/`). Uses `@DataClassName('ProductRow')` to avoid colliding with the domain `Product`. `id` is auto-increment `IntColumn`; dates are `DateTimeColumn`; `price` is `IntColumn` (minor units). Required columns (`name`, dates, `createdAt`, `updatedAt`) are `NOT NULL`.
+- [x] **DAO / data source**  
+  Created `lib/features/products/data/daos/product_dao.dart` (`@DriftAccessor(tables: [Products])`): `getAll`, `getById`, `insertProduct`, `updateProduct`, `deleteById`, `search` (case-insensitive `LOWER(...) LIKE` over name/brand/model/store/serialNumber, ordered by `createdAt DESC`).
+- [x] **DTO/Model mapping**  
+  Created `lib/features/products/data/mappers/product_mapper.dart` mapping `ProductRow`/`ProductsCompanion` <-> domain `Product`. Drift-generated types stay inside the data layer.
+- [x] **Repository implementation**  
+  Created `lib/features/products/data/repositories/product_repository_impl.dart`. `create` sets `createdAt`/`updatedAt`; `update` preserves `id`/`createdAt` and refreshes `updatedAt`; empty search falls back to `getAll`. Infra exceptions propagate to be handled as UI error states in the presentation layer.
+- [x] **Register in DI**  
+  Registered `ProductDao` and `ProductRepository` in `lib/app/di/injection.dart`.
 
 ## 3) Presentation Layer — Products (BLoC/Cubit)
 
@@ -136,3 +134,32 @@ Application allows managing products and understanding warranty status offline. 
 - Minimal UI first; polish only if needed to satisfy UX.
 - Avoid premature abstraction.
 - Update this plan as you progress.
+
+## Decisions & Deviations
+
+- **Price is stored as `int` minor units** (`899.99 EUR` -> `89999`), per
+  `FIELD_REQUIREMENTS.md` §10. The domain entity `Product.price` was changed
+  from `double?` to `int?` before any data existed (no migration needed).
+- **Table location**: `lib/core/database/tables/products_table.dart`
+  (`ARCHITECTURE.md` §21), not inside the feature's `data/tables/` folder.
+- **Mapper created despite `ARCHITECTURE.md` §13** ("not by default"): the
+  Drift row (`ProductRow`) is a generated infrastructure type that the domain
+  must not depend on, and the 14-field conversion is reused and unit-testable.
+- **DI uses constructor injection** (`ProductDao(getIt<AppDatabase>())`)
+  instead of the `getIt<AppDatabase>().productDao` example in
+  `ARCHITECTURE.md` §22. Registering the DAO via `@DriftDatabase(daos: [...])`
+  creates a cyclic import (`app_database.dart` <-> `product_dao.dart`) that
+  breaks drift's annotation resolution. *(Consider aligning the
+  `ARCHITECTURE.md` example with the constructor-injection form.)*
+- **"Expiring soon" pill deferred**: `DESIGN.md` defines a 4th visual state,
+  but the domain only has `future/active/expired` and no day-threshold rule
+  exists in `DATA_RULES.md`. Phase 1 shows the 3 domain statuses only. *(A
+  threshold would need to be defined in `DATA_RULES.md` first.)*
+- **`docs/DATA_MODEL.md` populated** as part of this phase (it was empty).
+  It notes that `FIELD_REQUIREMENTS.md` links to non-existent
+  `docs/DATE_RULES.md` and `docs/INVALID_DATE_VALIDATION.md`; the actual docs
+  are `DATA_RULES.md` and `WARRANTY_END_DATE_RULE.md`. *(Docs consistency to
+  fix.)*
+- **`injection_test.dart`** now asserts registration only (not resolving
+  instances): resolving `AppDatabase` builds a `driftDatabase(...)` connection
+  that calls `path_provider`, which requires a Flutter binding in tests.
