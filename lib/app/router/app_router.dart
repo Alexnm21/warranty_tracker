@@ -1,9 +1,12 @@
 import 'package:go_router/go_router.dart';
-import 'package:warranty_tracker/app/router/route_names.dart';
-import 'package:warranty_tracker/app/shell_page.dart';
-import 'package:warranty_tracker/features/home/presentation/views/home_view.dart';
-import 'package:warranty_tracker/features/products/presentation/views/product_list_view.dart';
-import 'package:warranty_tracker/features/settings/presentation/views/settings_view.dart';
+
+import '../../features/home/presentation/views/home_view.dart';
+import '../../features/products/presentation/pages/product_detail_page.dart';
+import '../../features/products/presentation/pages/product_form_page.dart';
+import '../../features/products/presentation/pages/product_list_page.dart';
+import '../../features/settings/presentation/views/settings_view.dart';
+import '../shell_page.dart';
+import 'route_names.dart';
 
 GoRouter createAppRouter() {
   return GoRouter(
@@ -27,7 +30,33 @@ GoRouter createAppRouter() {
               GoRoute(
                 path: RoutePaths.productList,
                 name: RouteNames.productList,
-                builder: (context, state) => const ProductListView(),
+                builder: (context, state) => const ProductListPage(),
+                routes: [
+                  GoRoute(
+                    path: 'new',
+                    name: RouteNames.productNew,
+                    builder: (context, state) => const ProductFormPage(),
+                  ),
+                  GoRoute(
+                    path: ':id',
+                    name: RouteNames.productDetail,
+                    builder: (context, state) => ProductDetailPage(
+                      productId:
+                          int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        name: RouteNames.productEdit,
+                        builder: (context, state) => ProductFormPage(
+                          productId:
+                              int.tryParse(state.pathParameters['id'] ?? '') ??
+                              0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

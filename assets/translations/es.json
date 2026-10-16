@@ -12,5 +12,70 @@
     "home": "Inicio",
     "products": "Productos",
     "settings": "Ajustes"
+  },
+  "products": {
+    "title": "Productos",
+    "add": "Añadir producto",
+    "search": "Buscar productos",
+    "noResults": "No se encontraron productos",
+    "unknown": "No indicado",
+    "empty": {
+      "title": "Aún no hay productos",
+      "description": "Añade tu primer producto para controlar su garantía."
+    },
+    "delete": {
+      "title": "Eliminar producto",
+      "message": "¿Eliminar \"{name}\"? No se puede deshacer."
+    },
+    "error": {
+      "load": "No se pudieron cargar los productos",
+      "save": "No se pudo guardar el producto",
+      "delete": "No se pudo eliminar el producto"
+    },
+    "detail": {
+      "brand": "Marca",
+      "model": "Modelo",
+      "store": "Tienda",
+      "purchaseDate": "Fecha de compra",
+      "price": "Precio",
+      "serialNumber": "Número de serie",
+      "notes": "Notas",
+      "warranty": "Garantía",
+      "notFound": "Producto no encontrado"
+    },
+    "form": {
+      "title": {
+        "create": "Nuevo producto",
+        "edit": "Editar producto"
+      },
+      "name": "Nombre",
+      "brand": "Marca",
+      "model": "Modelo",
+      "store": "Tienda",
+      "purchaseDate": "Fecha de compra",
+      "price": "Precio",
+      "currency": "Moneda",
+      "serialNumber": "Número de serie",
+      "warrantyStartDate": "Inicio de garantía",
+      "warrantyEndDate": "Fin de garantía",
+      "notes": "Notas",
+      "save": "Guardar",
+      "error": {
+        "nameRequired": "El nombre es obligatorio",
+        "purchaseDateRequired": "La fecha de compra es obligatoria",
+        "warrantyStartRequired": "El inicio de garantía es obligatorio",
+        "warrantyEndRequired": "El fin de garantía es obligatorio",
+        "warrantyEndBeforeStart": "El fin de garantía debe ser igual o posterior al inicio",
+        "priceInvalid": "Introduce un precio válido no negativo",
+        "currencyRequired": "La moneda es obligatoria si hay precio"
+      }
+    },
+    "warranty": {
+      "status": {
+        "future": "No iniciada",
+        "active": "Activa",
+        "expired": "Expirada"
+      }
+    }
   }
 }

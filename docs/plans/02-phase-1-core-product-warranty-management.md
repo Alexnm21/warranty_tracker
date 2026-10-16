@@ -57,10 +57,10 @@ Create `lib/features/products/data/` with tables, DAOs, mappers, data sources, r
 
 Create `lib/features/products/presentation/` with pages, widgets, blocs/cubits.
 
-- [ ] **Product List**  
+- [x] **Product List**  
   - Page: `pages/product_list_page.dart`  
   - Cubit/Bloc: `bloc/product_list_cubit.dart` (or bloc). Load all, search, delete with confirmation.  
-  - Widgets: `widgets/product_card.dart`, `widgets/empty_products.dart`
+  - Widgets: `widgets/product_card.dart`, `widgets/empty_products.dart`, `widgets/warranty_status_pill.dart`
 - [ ] **Product Detail**  
   - Page: `pages/product_detail_page.dart`  
   - Cubit: `bloc/product_detail_cubit.dart`  
@@ -69,34 +69,28 @@ Create `lib/features/products/presentation/` with pages, widgets, blocs/cubits.
   - Page: `pages/product_form_page.dart` (shared)  
   - Cubit: `bloc/product_form_cubit.dart` with validation  
   - Fields: name (required), brand, model, store, purchase date, price+currency, serial, warranty start/end, notes
-- [ ] **State classes**  
-  Use immutable states with `Equatable` if present in project style; otherwise follow existing conventions.
-- [ ] **Localization**  
-  Add user-facing strings to `assets/translations/` (en/es as appropriate). Use `tr()`.  
-  Keys: e.g. `products.title`, `products.empty`, `products.add`, `products.edit`, `products.delete`, `products.search`, `products.warranty.status.*`, etc.
-- [ ] **UI states**  
+- [x] **State classes**  
+  Immutable states with `copyWith` (no `Equatable`; not a project dependency). `ProductListState` with `loading/loaded/error`.
+- [x] **Localization**  
+  Added `products.*` keys (44) to `assets/translations/en.json` and `es.json`: list, detail labels, form fields, validation messages, warranty status, delete dialog, and error messages. Existing `common.*` keys are reused.
+- [x] **UI states**  
   Loading, empty, error, success. Follow DESIGN.md spacing/typography/components.
 
 ## 4) Navigation
 
-- [ ] **Routes**  
-  Add routes for products in `lib/app/router/app_router.dart`:  
-  - `/products` (list)  
-  - `/products/new` (create)  
-  - `/products/:id` (detail)  
-  - `/products/:id/edit` (edit)  
-  Use named routes where appropriate. Keep ShellPage integration in mind.
-- [ ] **Deep linking / params**  
-  Pass product id via route params. No business logic in router.
+- [x] **Routes**  
+  Added nested routes in `lib/app/router/app_router.dart`: `/products` (list), `/products/new` (create), `/products/:id` (detail), `/products/:id/edit` (edit). Named routes via `RouteNames`; navigation uses `goNamed` with `pathParameters`. `RoutePaths` kept for top-level paths only (nested paths must be relative in go_router). Detail/Form are stubs pending Steps 5–6.
+- [x] **Deep linking / params**  
+  Product id passed via path param (`state.pathParameters['id']`), parsed with `int.tryParse`. No business logic in router.
 
 ## 5) Integration
 
-- [ ] **Wire to Shell**  
-  Products tab should navigate to product list (already exists). Ensure navigation works.
-- [ ] **DI completeness**  
-  All new dependencies registered. No direct instantiation in widgets.
-- [ ] **Theme/Design**  
-  Reuse existing components from `core/widgets/`. Follow DESIGN.md.
+- [x] **Wire to Shell**  
+  Products branch points to `ProductListPage`; tab navigation works (existing `widget_test` still green).
+- [x] **DI completeness**  
+  `ProductListCubit` registered as a factory in `injection.dart`. No direct instantiation in widgets (`ProductListPage` reads it from `getIt`).
+- [x] **Theme/Design**  
+  Reused `AppColors`, `AppSpacing`, `AppRadii`, `AppTextStyles`. Follows DESIGN.md cards/pills/empty states/interactions (swipe-to-delete + confirm dialog).
 
 ## 6) Testing
 
@@ -163,3 +157,21 @@ Application allows managing products and understanding warranty status offline. 
 - **`injection_test.dart`** now asserts registration only (not resolving
   instances): resolving `AppDatabase` builds a `driftDatabase(...)` connection
   that calls `path_provider`, which requires a Flutter binding in tests.
+- **`setupInjection({AppDatabase? database})`** gained an optional database
+  parameter so widget tests can inject `AppDatabase.forTesting(NativeDatabase.memory())`.
+  The real `driftDatabase(...)` never opens under `flutter test`, which left the
+  list cubit stuck in `loading` and made `pumpAndSettle` time out. Production
+  behavior is unchanged (lazy, file-backed database).
+- **Navigation uses named routes + `pathParameters`** (`context.goNamed`), not
+  string paths. `RoutePaths` keeps only top-level absolute paths because nested
+  go_router routes must declare relative `path` values (`new`, `:id`, `edit`).
+- **List search field** uses `ValueListenableBuilder` on the `TextEditingController`
+  so the clear button toggles without a full-page rebuild.
+- **`products.noResults`** key (not `products.search.empty`): easy_localization
+  resolves dotted keys by walking a nested map, so a `search` **string** and a
+  `search.empty` sibling would conflict.
+- **Relative-import lint fixes** in `lib/app/app.dart` and `lib/main.dart`
+  (pre-existing `prefer_relative_imports` infos from Phase 0) are included.
+  `flutter analyze` is now fully clean.
+- **Detail/Form pages are stubs** in Step 4 (they render an empty `Scaffold`);
+  Steps 5–6 implement them. The routes and DI are already wired.

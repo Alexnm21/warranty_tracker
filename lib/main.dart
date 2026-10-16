@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:warranty_tracker/app/app.dart';
-import 'package:warranty_tracker/app/di/injection.dart';
+
+import 'app/app.dart';
+import 'app/di/injection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

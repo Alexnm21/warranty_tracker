@@ -12,5 +12,70 @@
     "home": "Home",
     "products": "Products",
     "settings": "Settings"
+  },
+  "products": {
+    "title": "Products",
+    "add": "Add product",
+    "search": "Search products",
+    "noResults": "No products found",
+    "unknown": "Not provided",
+    "empty": {
+      "title": "No products yet",
+      "description": "Add your first product to track its warranty."
+    },
+    "delete": {
+      "title": "Delete product",
+      "message": "Delete \"{name}\"? This can't be undone."
+    },
+    "error": {
+      "load": "Could not load products",
+      "save": "Could not save the product",
+      "delete": "Could not delete the product"
+    },
+    "detail": {
+      "brand": "Brand",
+      "model": "Model",
+      "store": "Store",
+      "purchaseDate": "Purchase date",
+      "price": "Price",
+      "serialNumber": "Serial number",
+      "notes": "Notes",
+      "warranty": "Warranty",
+      "notFound": "Product not found"
+    },
+    "form": {
+      "title": {
+        "create": "New product",
+        "edit": "Edit product"
+      },
+      "name": "Name",
+      "brand": "Brand",
+      "model": "Model",
+      "store": "Store",
+      "purchaseDate": "Purchase date",
+      "price": "Price",
+      "currency": "Currency",
+      "serialNumber": "Serial number",
+      "warrantyStartDate": "Warranty start",
+      "warrantyEndDate": "Warranty end",
+      "notes": "Notes",
+      "save": "Save",
+      "error": {
+        "nameRequired": "Name is required",
+        "purchaseDateRequired": "Purchase date is required",
+        "warrantyStartRequired": "Warranty start is required",
+        "warrantyEndRequired": "Warranty end is required",
+        "warrantyEndBeforeStart": "Warranty end must be on or after the start",
+        "priceInvalid": "Enter a valid non-negative price",
+        "currencyRequired": "Currency is required when a price is set"
+      }
+    },
+    "warranty": {
+      "status": {
+        "future": "Not started",
+        "active": "Active",
+        "expired": "Expired"
+      }
+    }
   }
 }
