@@ -191,6 +191,8 @@ Rules:
 * Route configuration must remain independent from individual widgets as much as practical.
 * Do not place navigation logic throughout business/domain code.
 * Authentication or other future route guards should be implemented through go_router mechanisms rather than ad-hoc checks.
+* **Pages under a nested go_router route must refresh their state when their route becomes current again.**
+  *Why this rule exists:* go_router keeps a parent route (and everything above it in the widget tree, including its `BlocProvider` and Cubits) alive while a child route such as `/products/new` is on top. So `BlocProvider(create:)` does not re-run when the child is popped, and the parent silently keeps showing stale data. This already caused a real bug in Phase 1: after creating a product the list still showed "No products yet" even though the row was saved. Handle it in `didChangeDependencies` with `ModalRoute.isCurrentOf(context)` — that API registers an inherited dependency on the route's `isCurrent`, so the callback fires exactly on push/pop and not on ordinary rebuilds (see `product_list_page.dart`). Do not work around it by adding redundant route pushes or by assuming the Cubit is recreated.
 
 ---
 
