@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:warranty_tracker/app/di/injection.dart';
 import 'package:warranty_tracker/core/extensions/datetime_extensions.dart';
 import 'package:warranty_tracker/core/widgets/option_selector_row.dart';
+import 'package:warranty_tracker/features/documents/domain/entities/document_source.dart';
+import 'package:warranty_tracker/features/documents/domain/entities/warranty_document.dart';
 import 'package:warranty_tracker/features/products/domain/entities/product.dart';
 import 'package:warranty_tracker/features/products/presentation/bloc/product_form_cubit.dart';
 import 'package:warranty_tracker/features/products/presentation/pages/product_form_page.dart';
@@ -53,6 +55,21 @@ void main() {
   Future<void> scrollToDurationSelector(WidgetTester tester) async {
     await tester.scrollUntilVisible(
       find.byType(OptionSelectorRow),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+  }
+
+  /// Scrolls the lazy form list until the documents section is built.
+  Future<void> scrollToDocuments(WidgetTester tester) async {
+    await tester.scrollUntilVisible(
+      find.text('Scan'),
       200,
       scrollable: find
           .descendant(
@@ -196,5 +213,26 @@ void main() {
 
     expect(find.text(targetDate.dateString), findsOneWidget);
     expect(durationSelector(tester).selectedOption, selector.options.last);
+  });
+
+  testWidgets('adds a scanned document to the form', (tester) async {
+    documentImporter.scannedDocuments = [
+      WarrantyDocument(
+        fileName: 'scan.pdf',
+        filePath: '/staged/scan.pdf',
+        mimeType: 'application/pdf',
+        sizeBytes: 10,
+        source: DocumentSource.scan,
+      ),
+    ];
+
+    await pumpLocalized(tester, const ProductFormPage());
+    await scrollToDocuments(tester);
+
+    await tester.tap(find.text('Scan'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('scan.pdf'), findsOneWidget);
+    expect(find.text('Pending save'), findsOneWidget);
   });
 }

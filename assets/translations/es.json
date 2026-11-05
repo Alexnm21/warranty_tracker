@@ -75,6 +75,22 @@
         "documents": "Documentos adjuntos"
       },
       "documents": {
+        "actions": {
+          "scan": "Escanear",
+          "upload": "Subir",
+          "photo": "Foto"
+        },
+        "importing": "Importando documento…",
+        "empty": "No hay documentos adjuntos",
+        "emptyHint": "Añade un recibo, una factura o un documento de garantía.",
+        "pending": "Pendiente de guardar",
+        "open": "Abrir",
+        "remove": {
+          "action": "Eliminar",
+          "title": "Eliminar documento",
+          "stagedMessage": "¿Eliminar \"{name}\"? El archivo se descartará.",
+          "savedMessage": "¿Eliminar \"{name}\" de este producto? El cambio se aplicará al guardar."
+        },
         "error": {
           "import": "No se pudo importar el documento",
           "emptyFile": "El archivo seleccionado está vacío",

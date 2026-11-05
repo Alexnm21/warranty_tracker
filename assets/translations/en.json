@@ -75,6 +75,22 @@
         "documents": "Attached Documents"
       },
       "documents": {
+        "actions": {
+          "scan": "Scan",
+          "upload": "Upload",
+          "photo": "Photo"
+        },
+        "importing": "Importing document…",
+        "empty": "No documents attached",
+        "emptyHint": "Add a receipt, invoice or warranty document.",
+        "pending": "Pending save",
+        "open": "Open",
+        "remove": {
+          "action": "Remove",
+          "title": "Remove document",
+          "stagedMessage": "Remove \"{name}\"? The file will be discarded.",
+          "savedMessage": "Remove \"{name}\" from this product? The change is applied when you save."
+        },
         "error": {
           "import": "Could not import the document",
           "emptyFile": "The selected file is empty",

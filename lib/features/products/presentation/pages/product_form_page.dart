@@ -18,6 +18,7 @@ import '../../../../core/widgets/svg_icon.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/product_form_cubit.dart';
 import '../bloc/product_form_state.dart';
+import '../widgets/product_documents_section.dart';
 
 /// Days used to approximate one warranty year.
 const int _daysPerYear = 365;
@@ -177,9 +178,16 @@ class _ProductFormViewState extends State<_ProductFormView> {
               : 'products.form.title.create'.tr(),
         ),
         actions: [
-          IconButton(
-            onPressed: () => _save(),
-            icon: const Icon(Icons.save, color: AppColors.primary),
+          BlocSelector<ProductFormCubit, ProductFormState, bool>(
+            selector: (state) =>
+                state.status == ProductFormStatus.saving || state.isImporting,
+            builder: (context, isBusy) => IconButton(
+              onPressed: isBusy ? null : _save,
+              icon: Icon(
+                Icons.save,
+                color: isBusy ? AppColors.outlineVariant : AppColors.primary,
+              ),
+            ),
           ),
         ],
       ),
@@ -203,13 +211,19 @@ class _ProductFormViewState extends State<_ProductFormView> {
   Widget _buildForm(BuildContext context, ProductFormState state) {
     final errors = state.errors;
     final saving = state.status == ProductFormStatus.saving;
+    final busy = saving || state.isImporting;
+    final cubit = context.read<ProductFormCubit>();
 
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
         _FormSectionCard(
           title: 'products.form.section.purchase'.tr(),
-          icon: 'product_outlined',
+          icon: const SvgIcon(
+            iconName: 'product_outlined',
+            color: AppColors.primary,
+            size: 17,
+          ),
           children: [
             _TextField(
               controller: _nameController,
@@ -248,7 +262,11 @@ class _ProductFormViewState extends State<_ProductFormView> {
 
         _FormSectionCard(
           title: 'products.form.section.purchase'.tr(),
-          icon: 'ticket',
+          icon: const SvgIcon(
+            iconName: 'ticket',
+            color: AppColors.primary,
+            size: 17,
+          ),
           children: [
             _TextField(
               controller: _storeController,
@@ -299,7 +317,11 @@ class _ProductFormViewState extends State<_ProductFormView> {
 
         _FormSectionCard(
           title: 'products.form.section.warranty'.tr(),
-          icon: 'check',
+          icon: const SvgIcon(
+            iconName: 'check',
+            color: AppColors.primary,
+            size: 17,
+          ),
           children: [
             _WarrantyDurationField(
               endDate: _warrantyEndDate,
@@ -316,9 +338,31 @@ class _ProductFormViewState extends State<_ProductFormView> {
           ],
         ).withPadding(const EdgeInsets.only(bottom: AppSpacing.lg)),
 
+        _FormSectionCard(
+          title: 'products.form.section.documents'.tr(),
+          icon: const Icon(
+            Icons.attach_file,
+            size: 17,
+            color: AppColors.primary,
+          ),
+          children: [
+            ProductDocumentsSection(
+              documents: state.documents,
+              isImporting: state.isImporting,
+              isBusy: busy,
+              error: state.documentError,
+              onScan: cubit.scanDocuments,
+              onUpload: cubit.pickDocuments,
+              onTakePhoto: cubit.takePhoto,
+              onOpen: cubit.openDocument,
+              onRemove: cubit.removeDocument,
+            ),
+          ],
+        ).withPadding(const EdgeInsets.only(bottom: AppSpacing.lg)),
+
         const SizedBox(height: AppSpacing.lg),
         FilledButton(
-          onPressed: saving ? null : _save,
+          onPressed: busy ? null : _save,
           child: saving
               ? const SizedBox(
                   height: 20,
@@ -335,7 +379,7 @@ class _ProductFormViewState extends State<_ProductFormView> {
 /// A card with a title that contains a list of TextFields.
 class _FormSectionCard extends StatelessWidget {
   final String title;
-  final String icon;
+  final Widget icon;
   final List<Widget> children;
 
   const _FormSectionCard({
@@ -363,7 +407,7 @@ class _FormSectionCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              SvgIcon(iconName: icon, color: AppColors.primary, size: 17),
+              icon,
               const SizedBox(width: AppSpacing.xs),
               Text(title, style: AppTextStyles.label),
             ],
