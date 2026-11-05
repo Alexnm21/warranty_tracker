@@ -99,6 +99,19 @@ class DocumentImporter {
     return _stageAll(validated, DocumentSource.file);
   }
 
+  /// Deletes a staged document that will not be saved.
+  Future<void> discard(WarrantyDocument document) async {
+    if (document.isPersisted) {
+      throw ArgumentError.value(
+        document,
+        'document',
+        'Only staged documents can be discarded',
+      );
+    }
+
+    await _storage.deleteFile(document.filePath);
+  }
+
   Future<List<String>?> _runScanner() async {
     try {
       return await _scanner();

@@ -8,15 +8,30 @@ import 'package:warranty_tracker/features/products/presentation/bloc/product_for
 import 'package:warranty_tracker/features/products/presentation/pages/product_form_page.dart';
 
 import '../../../../helpers/pump_localized.dart';
+import '../fakes/fake_document_importer.dart';
+import '../fakes/fake_document_opener.dart';
+import '../fakes/fake_document_repository.dart';
 import '../fakes/fake_product_repository.dart';
 
 void main() {
   late FakeProductRepository repository;
+  late FakeDocumentRepository documentRepository;
+  late FakeDocumentImporter documentImporter;
+  late FakeDocumentOpener documentOpener;
 
   setUp(() {
     repository = FakeProductRepository();
+    documentRepository = FakeDocumentRepository();
+    documentImporter = FakeDocumentImporter();
+    documentOpener = FakeDocumentOpener();
     getIt.registerFactoryParam<ProductFormCubit, int?, void>(
-      (productId, _) => ProductFormCubit(repository, productId: productId),
+      (productId, _) => ProductFormCubit(
+        repository: repository,
+        documentRepository: documentRepository,
+        documentImporter: documentImporter,
+        documentOpener: documentOpener,
+        productId: productId,
+      ),
     );
   });
 

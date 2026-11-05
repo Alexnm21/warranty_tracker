@@ -8,6 +8,7 @@ import 'package:warranty_tracker/features/documents/data/services/document_file_
 import 'package:warranty_tracker/features/documents/data/services/document_importer.dart';
 import 'package:warranty_tracker/features/documents/domain/entities/document_exception.dart';
 import 'package:warranty_tracker/features/documents/domain/entities/document_source.dart';
+import 'package:warranty_tracker/features/documents/domain/entities/warranty_document.dart';
 
 void main() {
   late Directory tempDirectory;
@@ -189,6 +190,34 @@ void main() {
       importer.pickFiles(),
       throwsA(_importFailure(DocumentImportFailure.failed)),
     );
+  });
+
+  test('discard removes a staged document', () async {
+    final source = await _writeFile(tempDirectory, 'receipt.pdf', 'pdf');
+    final importer = DocumentImporter(
+      storage: storage,
+      fileSelector: () async => [XFile(source.path)],
+    );
+    final document = (await importer.pickFiles()).single;
+
+    await importer.discard(document);
+
+    expect(await File(document.filePath).exists(), isFalse);
+  });
+
+  test('discard rejects persisted documents', () async {
+    final importer = DocumentImporter(storage: storage);
+    const document = WarrantyDocument(
+      id: 1,
+      productId: 1,
+      fileName: 'receipt.pdf',
+      filePath: '/documents/1/receipt.pdf',
+      mimeType: 'application/pdf',
+      sizeBytes: 10,
+      source: DocumentSource.file,
+    );
+
+    await expectLater(importer.discard(document), throwsArgumentError);
   });
 
   test('rejects empty files', () async {

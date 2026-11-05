@@ -1,6 +1,14 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/utils/price_format.dart';
+import '../../../documents/data/services/document_importer.dart';
+import '../../../documents/data/services/document_opener.dart';
+import '../../../documents/domain/entities/document_exception.dart';
+import '../../../documents/domain/entities/warranty_document.dart';
+import '../../../documents/domain/repositories/document_repository.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import 'product_form_state.dart';
@@ -32,66 +40,324 @@ class ProductFormData {
   final String? notes;
 }
 
-/// Drives the product create/edit form: loads the product when editing and
-/// validates + persists it on save.
+/// Drives the product create/edit form: loads the product and its documents
+/// when editing, manages staged documents and validates + persists everything
+/// on save.
 ///
 /// Created with the target `productId` (null to create). Business validation
 /// lives here so it stays out of the widgets and is unit-testable.
 class ProductFormCubit extends Cubit<ProductFormState> {
-  ProductFormCubit(this._repository, {int? productId})
-    : _productId = productId,
-      super(
-        ProductFormState(
-          status: productId == null
-              ? ProductFormStatus.ready
-              : ProductFormStatus.loading,
-        ),
-      );
+  ProductFormCubit({
+    required ProductRepository repository,
+    required DocumentRepository documentRepository,
+    required DocumentImporter documentImporter,
+    required DocumentOpener documentOpener,
+    int? productId,
+  }) : _repository = repository,
+       _documentRepository = documentRepository,
+       _documentImporter = documentImporter,
+       _documentOpener = documentOpener,
+       _productId = productId,
+       super(
+         ProductFormState(
+           status: productId == null
+               ? ProductFormStatus.ready
+               : ProductFormStatus.loading,
+         ),
+       );
 
   final ProductRepository _repository;
-  final int? _productId;
+  final DocumentRepository _documentRepository;
+  final DocumentImporter _documentImporter;
+  final DocumentOpener _documentOpener;
 
-  /// Loads the product being edited. No-op when creating a new product.
+  /// Becomes non-null after the first successful save so retries update the
+  /// product instead of creating a duplicate.
+  int? _productId;
+
+  Completer<void>? _activeOperation;
+  bool _isClosing = false;
+
+  bool get _isBusy =>
+      state.isImporting || state.status == ProductFormStatus.saving;
+
+  /// Loads the product being edited and its persisted documents.
+  ///
+  /// No-op when creating a new product.
   Future<void> load() async {
-    if (_productId == null) {
+    final productId = _productId;
+    if (productId == null) {
       return;
     }
 
     try {
-      final product = await _repository.getById(_productId);
+      final product = await _repository.getById(productId);
       if (product == null) {
-        emit(const ProductFormState(status: ProductFormStatus.loadError));
-      } else {
-        emit(
-          ProductFormState(status: ProductFormStatus.ready, product: product),
-        );
+        _emit(const ProductFormState(status: ProductFormStatus.loadError));
+        return;
       }
-    } catch (_) {
-      emit(const ProductFormState(status: ProductFormStatus.loadError));
+
+      final documents = await _documentRepository.getByProduct(productId);
+      _emit(
+        ProductFormState(
+          status: ProductFormStatus.ready,
+          product: product,
+          documents: documents,
+        ),
+      );
+    } on Exception {
+      _emit(const ProductFormState(status: ProductFormStatus.loadError));
     }
   }
 
-  /// Validates [data] and persists it.
+  /// Validates [data] and persists the product and its documents.
   ///
   /// Emits the validation errors without touching the repository when invalid,
   /// then [ProductFormStatus.saved] or [ProductFormStatus.saveError].
-  Future<void> save(ProductFormData data) async {
-    final errors = _validate(data);
-    if (errors.isNotEmpty) {
-      emit(state.copyWith(errors: errors));
+  Future<void> save(ProductFormData data) {
+    if (_isBusy) {
+      return Future.value();
+    }
+    return _track(() => _save(data));
+  }
+
+  /// Scans documents and stages them in the form.
+  Future<void> scanDocuments() {
+    if (_isBusy) {
+      return Future.value();
+    }
+    return _track(() => _import(_documentImporter.scanDocuments));
+  }
+
+  /// Takes a photo and stages it in the form.
+  Future<void> takePhoto() {
+    if (_isBusy) {
+      return Future.value();
+    }
+    return _track(
+      () => _import(() async {
+        final document = await _documentImporter.takePhoto();
+        return document == null ? const <WarrantyDocument>[] : [document];
+      }),
+    );
+  }
+
+  /// Picks one or more files and stages them in the form.
+  Future<void> pickDocuments() {
+    if (_isBusy) {
+      return Future.value();
+    }
+    return _track(() => _import(_documentImporter.pickFiles));
+  }
+
+  /// Removes a document from the form.
+  ///
+  /// Staged files are deleted immediately. Persisted documents are only marked
+  /// for deletion and removed when the product is saved.
+  Future<void> removeDocument(WarrantyDocument document) async {
+    if (state.status == ProductFormStatus.saving) {
       return;
     }
 
-    emit(state.copyWith(status: ProductFormStatus.saving, errors: const {}));
+    if (document.isPersisted) {
+      _emit(
+        state.copyWith(
+          documents: state.documents
+              .where((item) => item.id != document.id)
+              .toList(),
+          removedDocuments: [...state.removedDocuments, document],
+          clearDocumentError: true,
+        ),
+      );
+      return;
+    }
+
+    var deleteFailed = false;
+    try {
+      await _documentImporter.discard(document);
+    } on Exception {
+      deleteFailed = true;
+    }
+
+    _emit(
+      state.copyWith(
+        documents: state.documents
+            .where((item) => item.filePath != document.filePath)
+            .toList(),
+        documentError: deleteFailed
+            ? 'products.form.documents.error.delete'
+            : null,
+        clearDocumentError: !deleteFailed,
+      ),
+    );
+  }
+
+  /// Opens a document with the system viewer.
+  Future<void> openDocument(WarrantyDocument document) async {
+    _emit(state.copyWith(clearDocumentError: true));
+
+    try {
+      await _documentOpener.open(document.filePath);
+    } on DocumentOpenException catch (error) {
+      _emit(state.copyWith(documentError: _openErrorKey(error.failure)));
+    } on Exception {
+      _emit(
+        state.copyWith(documentError: 'products.form.documents.error.open'),
+      );
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    _isClosing = true;
+
+    final active = _activeOperation;
+    if (active != null) {
+      await active.future;
+    }
+
+    await _discardDocuments(
+      state.documents.where((document) => !document.isPersisted),
+    );
+    await super.close();
+  }
+
+  Future<void> _save(ProductFormData data) async {
+    final errors = _validate(data);
+    if (errors.isNotEmpty) {
+      _emit(state.copyWith(errors: errors));
+      return;
+    }
+
+    _emit(
+      state.copyWith(
+        status: ProductFormStatus.saving,
+        errors: const {},
+        clearDocumentError: true,
+      ),
+    );
 
     try {
       final product = _toProduct(data);
       final saved = _productId == null
           ? await _repository.create(product)
           : await _repository.update(product);
-      emit(state.copyWith(status: ProductFormStatus.saved, product: saved));
-    } catch (_) {
-      emit(state.copyWith(status: ProductFormStatus.saveError));
+      final productId = saved.id;
+      if (productId == null) {
+        _emit(state.copyWith(status: ProductFormStatus.saveError));
+        return;
+      }
+
+      _productId = productId;
+      _emit(state.copyWith(product: saved));
+
+      await _persistDocuments(productId);
+      await _deleteRemovedDocuments();
+
+      _emit(
+        state.copyWith(
+          status: ProductFormStatus.saved,
+          product: saved,
+          removedDocuments: const [],
+          clearDocumentError: true,
+        ),
+      );
+    } on Exception {
+      _emit(state.copyWith(status: ProductFormStatus.saveError));
+    }
+  }
+
+  Future<void> _persistDocuments(int productId) async {
+    final staged = state.documents
+        .where((document) => !document.isPersisted)
+        .toList();
+
+    for (final document in staged) {
+      final persisted = await _documentRepository.add(productId, document);
+      _emit(
+        state.copyWith(
+          documents: state.documents
+              .map(
+                (item) => item.filePath == document.filePath ? persisted : item,
+              )
+              .toList(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteRemovedDocuments() async {
+    for (final document in List.of(state.removedDocuments)) {
+      await _documentRepository.delete(document);
+      _emit(
+        state.copyWith(
+          removedDocuments: state.removedDocuments
+              .where((item) => item.id != document.id)
+              .toList(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _import(
+    Future<List<WarrantyDocument>> Function() importDocuments,
+  ) async {
+    _emit(state.copyWith(isImporting: true, clearDocumentError: true));
+
+    try {
+      final documents = await importDocuments();
+      if (_isClosing) {
+        await _discardDocuments(documents);
+        return;
+      }
+
+      if (documents.isNotEmpty) {
+        _emit(state.copyWith(documents: [...state.documents, ...documents]));
+      }
+    } on DocumentImportException catch (error) {
+      _emit(state.copyWith(documentError: _importErrorKey(error.failure)));
+    } on Exception {
+      _emit(
+        state.copyWith(documentError: 'products.form.documents.error.import'),
+      );
+    } finally {
+      _emit(state.copyWith(isImporting: false));
+    }
+  }
+
+  Future<void> _discardDocuments(Iterable<WarrantyDocument> documents) async {
+    for (final document in documents) {
+      if (document.isPersisted) {
+        continue;
+      }
+
+      try {
+        await _documentImporter.discard(document);
+      } on Exception {
+        debugPrint('ProductFormCubit: could not discard a staged document.');
+      }
+    }
+  }
+
+  Future<void> _track(Future<void> Function() operation) async {
+    final completer = Completer<void>();
+    _activeOperation = completer;
+
+    try {
+      await operation();
+    } finally {
+      if (identical(_activeOperation, completer)) {
+        _activeOperation = null;
+      }
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    }
+  }
+
+  void _emit(ProductFormState next) {
+    if (!_isClosing && !isClosed) {
+      emit(next);
     }
   }
 
@@ -158,5 +424,31 @@ class ProductFormCubit extends Cubit<ProductFormState> {
   static String? _nullIfEmpty(String? value) {
     final trimmed = value?.trim();
     return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
+  }
+
+  static String _importErrorKey(DocumentImportFailure failure) {
+    return switch (failure) {
+      DocumentImportFailure.emptyFile =>
+        'products.form.documents.error.emptyFile',
+      DocumentImportFailure.unsupportedType =>
+        'products.form.documents.error.unsupportedType',
+      DocumentImportFailure.fileTooLarge =>
+        'products.form.documents.error.fileTooLarge',
+      DocumentImportFailure.permissionDenied =>
+        'products.form.documents.error.permissionDenied',
+      DocumentImportFailure.failed => 'products.form.documents.error.import',
+    };
+  }
+
+  static String _openErrorKey(DocumentOpenFailure failure) {
+    return switch (failure) {
+      DocumentOpenFailure.fileNotFound =>
+        'products.form.documents.error.fileNotFound',
+      DocumentOpenFailure.noAppAvailable =>
+        'products.form.documents.error.noApp',
+      DocumentOpenFailure.permissionDenied =>
+        'products.form.documents.error.permissionDenied',
+      DocumentOpenFailure.failed => 'products.form.documents.error.open',
+    };
   }
 }

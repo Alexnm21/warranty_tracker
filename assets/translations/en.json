@@ -74,6 +74,19 @@
         "warranty": "Warranty Information",
         "documents": "Attached Documents"
       },
+      "documents": {
+        "error": {
+          "import": "Could not import the document",
+          "emptyFile": "The selected file is empty",
+          "unsupportedType": "Only PDF, JPG, PNG, HEIC and WEBP files are supported",
+          "fileTooLarge": "The file must be 25 MB or smaller",
+          "permissionDenied": "Permission denied. Allow access in system settings and try again.",
+          "open": "Could not open the document",
+          "fileNotFound": "The document file could not be found",
+          "noApp": "No app is available to open this document",
+          "delete": "Could not delete the document"
+        }
+      },
       "duration": "Warranty Duration",
       "years": {
         "one": "{} year",

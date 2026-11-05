@@ -74,6 +74,19 @@
         "warranty": "Información de garantía",
         "documents": "Documentos adjuntos"
       },
+      "documents": {
+        "error": {
+          "import": "No se pudo importar el documento",
+          "emptyFile": "El archivo seleccionado está vacío",
+          "unsupportedType": "Solo se admiten archivos PDF, JPG, PNG, HEIC y WEBP",
+          "fileTooLarge": "El archivo debe pesar 25 MB o menos",
+          "permissionDenied": "Permiso denegado. Permite el acceso en los ajustes del sistema e inténtalo de nuevo.",
+          "open": "No se pudo abrir el documento",
+          "fileNotFound": "No se encontró el archivo del documento",
+          "noApp": "No hay ninguna aplicación disponible para abrir este documento",
+          "delete": "No se pudo eliminar el documento"
+        }
+      },
       "duration": "Duration de Garantía",
       "years": {
         "one": "{} año",

@@ -33,6 +33,8 @@
 		<true/>
 		<key>NSCameraUsageDescription</key>
 		<string>The camera is used to scan warranty documents and take photos of them.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Photo library access is used to attach warranty documents to a product.</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>

@@ -50,7 +50,12 @@ void setupInjection({AppDatabase? database}) {
   );
 
   getIt.registerFactoryParam<ProductFormCubit, int?, void>(
-    (productId, _) =>
-        ProductFormCubit(getIt<ProductRepository>(), productId: productId),
+    (productId, _) => ProductFormCubit(
+      repository: getIt<ProductRepository>(),
+      documentRepository: getIt<DocumentRepository>(),
+      documentImporter: getIt<DocumentImporter>(),
+      documentOpener: getIt<DocumentOpener>(),
+      productId: productId,
+    ),
   );
 }
