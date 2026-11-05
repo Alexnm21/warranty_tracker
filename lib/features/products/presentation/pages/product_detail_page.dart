@@ -10,9 +10,11 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/utils/date_format.dart';
 import '../../../../core/utils/price_format.dart';
+import '../../../documents/domain/entities/warranty_document.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/product_detail_cubit.dart';
 import '../bloc/product_detail_state.dart';
+import '../widgets/product_documents_list.dart';
 import '../widgets/warranty_status_pill.dart';
 
 /// Product detail screen.
@@ -35,8 +37,33 @@ class ProductDetailPage extends StatelessWidget {
   }
 }
 
-class _ProductDetailView extends StatelessWidget {
+class _ProductDetailView extends StatefulWidget {
   const _ProductDetailView();
+
+  @override
+  State<_ProductDetailView> createState() => _ProductDetailViewState();
+}
+
+class _ProductDetailViewState extends State<_ProductDetailView> {
+  /// Whether this route was current at the last dependency change.
+  ///
+  /// Starts as `true` because the cubit is loaded by `BlocProvider` on the
+  /// first build, so only later re-entries need a reload.
+  bool _wasCurrent = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCurrent = ModalRoute.isCurrentOf(context) ?? true;
+    if (!isCurrent) {
+      _wasCurrent = false;
+    } else if (!_wasCurrent) {
+      _wasCurrent = true;
+      // A nested screen (edit form) was popped and may have changed the
+      // product or its documents, so the detail has to be reloaded.
+      context.read<ProductDetailCubit>().load();
+    }
+  }
 
   /// Navigates to the edit form of [id].
   void _openEdit(BuildContext context, int id) => context.goNamed(
@@ -133,15 +160,34 @@ class _ProductDetailView extends StatelessWidget {
           onRetry: context.read<ProductDetailCubit>().load,
         );
       case ProductDetailStatus.loaded:
-        return _ProductDetails(product: state.product!);
+        return _ProductDetails(
+          product: state.product!,
+          documents: state.documents,
+          documentsStatus: state.documentsStatus,
+          documentError: state.documentError,
+          onOpenDocument: context.read<ProductDetailCubit>().openDocument,
+          onRetryDocuments: context.read<ProductDetailCubit>().loadDocuments,
+        );
     }
   }
 }
 
 class _ProductDetails extends StatelessWidget {
-  const _ProductDetails({required this.product});
+  const _ProductDetails({
+    required this.product,
+    required this.documents,
+    required this.documentsStatus,
+    required this.documentError,
+    required this.onOpenDocument,
+    required this.onRetryDocuments,
+  });
 
   final Product product;
+  final List<WarrantyDocument> documents;
+  final ProductDetailDocumentsStatus documentsStatus;
+  final String? documentError;
+  final Future<void> Function(WarrantyDocument document) onOpenDocument;
+  final Future<void> Function() onRetryDocuments;
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +223,23 @@ class _ProductDetails extends StatelessWidget {
                 'products.detail.warrantyEndDate'.tr(),
                 formatDate(context, product.warrantyEndDate!),
               ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _Section(
+          title: 'products.detail.documents.title'.tr(),
+          children: [
+            ProductDocumentsList(
+              documents: documents,
+              isLoading:
+                  documentsStatus == ProductDetailDocumentsStatus.loading,
+              loadError: documentsStatus == ProductDetailDocumentsStatus.error
+                  ? 'products.detail.documents.loadError'
+                  : null,
+              openError: documentError,
+              onOpen: onOpenDocument,
+              onRetry: onRetryDocuments,
+            ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),

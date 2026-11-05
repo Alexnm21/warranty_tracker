@@ -11,6 +11,7 @@ import '../../../documents/domain/entities/warranty_document.dart';
 import '../../../documents/domain/repositories/document_repository.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
+import '../utils/document_error_keys.dart';
 import 'product_form_state.dart';
 
 /// Raw values entered in the form, before validation or mapping to a [Product].
@@ -199,7 +200,7 @@ class ProductFormCubit extends Cubit<ProductFormState> {
     try {
       await _documentOpener.open(document.filePath);
     } on DocumentOpenException catch (error) {
-      _emit(state.copyWith(documentError: _openErrorKey(error.failure)));
+      _emit(state.copyWith(documentError: documentOpenErrorKey(error.failure)));
     } on Exception {
       _emit(
         state.copyWith(documentError: 'products.form.documents.error.open'),
@@ -437,18 +438,6 @@ class ProductFormCubit extends Cubit<ProductFormState> {
       DocumentImportFailure.permissionDenied =>
         'products.form.documents.error.permissionDenied',
       DocumentImportFailure.failed => 'products.form.documents.error.import',
-    };
-  }
-
-  static String _openErrorKey(DocumentOpenFailure failure) {
-    return switch (failure) {
-      DocumentOpenFailure.fileNotFound =>
-        'products.form.documents.error.fileNotFound',
-      DocumentOpenFailure.noAppAvailable =>
-        'products.form.documents.error.noApp',
-      DocumentOpenFailure.permissionDenied =>
-        'products.form.documents.error.permissionDenied',
-      DocumentOpenFailure.failed => 'products.form.documents.error.open',
     };
   }
 }

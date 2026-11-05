@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../documents/domain/entities/warranty_document.dart';
+import 'warranty_document_tile.dart';
 
 /// Document actions and attachment list shown in the product form.
 ///
@@ -111,7 +112,7 @@ class ProductDocumentsSection extends StatelessWidget {
         if (documents.isEmpty && !isImporting) const _EmptyDocuments(),
         if (documents.isNotEmpty)
           for (var index = 0; index < documents.length; index++) ...[
-            _DocumentTile(
+            WarrantyDocumentTile(
               document: documents[index],
               isBusy: isBusy,
               onOpen: () => onOpen(documents[index]),
@@ -219,104 +220,6 @@ class _EmptyDocuments extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DocumentTile extends StatelessWidget {
-  const _DocumentTile({
-    required this.document,
-    required this.isBusy,
-    required this.onOpen,
-    required this.onRemove,
-  });
-
-  final WarrantyDocument document;
-  final bool isBusy;
-  final Future<void> Function() onOpen;
-  final Future<void> Function() onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(AppRadii.md),
-      child: InkWell(
-        onTap: isBusy
-            ? null
-            : () async {
-                await onOpen();
-              },
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.smm,
-            vertical: AppSpacing.sm,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryContainer,
-                  borderRadius: BorderRadius.circular(AppRadii.base),
-                ),
-                child: Icon(
-                  document.isImage
-                      ? Icons.image_outlined
-                      : Icons.picture_as_pdf_outlined,
-                  size: 20,
-                  color: AppColors.onPrimaryContainer,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.smm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      document.fileName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.label,
-                    ),
-                    if (!document.isPersisted) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'products.form.documents.pending'.tr(),
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: isBusy
-                    ? null
-                    : () async {
-                        await onOpen();
-                      },
-                icon: const Icon(Icons.open_in_new, size: 20),
-                tooltip: 'products.form.documents.open'.tr(),
-                color: AppColors.primary,
-              ),
-              IconButton(
-                onPressed: isBusy
-                    ? null
-                    : () async {
-                        await onRemove();
-                      },
-                icon: const Icon(Icons.delete_outline, size: 20),
-                tooltip: 'products.form.documents.remove.action'.tr(),
-                color: AppColors.error,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

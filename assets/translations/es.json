@@ -43,7 +43,13 @@
       "notes": "Notas",
       "warranty": "Garantía",
       "warrantyEndDate": "Fin de garantía",
-      "notFound": "Producto no encontrado"
+      "notFound": "Producto no encontrado",
+      "documents": {
+        "title": "Documentos",
+        "empty": "No hay documentos adjuntos",
+        "loadError": "No se pudieron cargar los documentos",
+        "retry": "Reintentar"
+      }
     },
     "form": {
       "title": {
