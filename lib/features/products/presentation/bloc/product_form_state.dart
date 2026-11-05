@@ -4,14 +4,7 @@ import '../../domain/entities/product.dart';
 enum ProductFormStatus { loading, ready, saving, saved, loadError, saveError }
 
 /// Fields that can carry a validation error.
-enum ProductFormField {
-  name,
-  purchaseDate,
-  warrantyStartDate,
-  warrantyEndDate,
-  price,
-  currency,
-}
+enum ProductFormField { name, purchaseDate, warrantyEndDate, price, currency }
 
 /// State for the product create/edit form.
 class ProductFormState {

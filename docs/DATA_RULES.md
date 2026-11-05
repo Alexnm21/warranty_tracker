@@ -24,13 +24,13 @@ Field requirements are defined in:
 
 # 2. Product Dates
 
-The current product model contains three relevant dates:
+The current product model contains two relevant dates:
 
 * `purchaseDate`
-* `warrantyStartDate`
 * `warrantyEndDate`
 
-They represent different concepts and must not be treated as interchangeable.
+The purchase date is also the first calendar date on which the warranty is
+covered, so no separate warranty start date exists.
 
 ---
 
@@ -43,34 +43,32 @@ Rules:
 * It is required.
 * It represents a calendar date.
 * Time of day is not relevant.
-* It must not be automatically changed when warranty dates change.
-* It does not define whether the warranty is active, future, or expired.
+* It is the first day of the warranty coverage.
+* It must not be automatically changed when the warranty end date changes.
 
-The purchase date is informational.
+Example:
+
+```text
+purchaseDate    = 2026-01-10
+warrantyEndDate = 2028-01-10
+```
+
+This means the warranty is covered from `2026-01-10` through `2028-01-10`.
 
 ---
 
 # 4. Warranty Start Date
 
-`warrantyStartDate` represents the first calendar date on which the warranty is considered active.
+There is no separate warranty start date.
 
-Rules:
-
-* It is required.
-* It represents a calendar date.
-* It must be on or before `warrantyEndDate`.
-* It may be before, equal to, or after `purchaseDate`.
-
-The application must not assume that the warranty always starts on the purchase date.
-
-Example:
+The warranty starts on the `purchaseDate`:
 
 ```text
-purchaseDate      = 2026-01-10
-warrantyStartDate = 2026-01-15
+warrantyStartDate = purchaseDate
 ```
 
-This is valid.
+The application must not add an extra field for it and must not assume that
+the warranty starts on a different date than the purchase.
 
 ---
 
@@ -82,74 +80,37 @@ Rules:
 
 * It is required.
 * It represents a calendar date.
-* It must be on or after `warrantyStartDate`.
+* It must be on or after `purchaseDate`.
 * It is inclusive.
 
 Invalid:
 
 ```text
-warrantyStartDate = 2026-01-10
-warrantyEndDate   = 2026-01-09
+purchaseDate    = 2026-01-10
+warrantyEndDate = 2026-01-09
 ```
 
 Valid:
 
 ```text
-warrantyStartDate = 2026-01-10
-warrantyEndDate   = 2026-01-10
+purchaseDate    = 2026-01-10
+warrantyEndDate = 2026-01-10
 ```
 
-A warranty whose start and end dates are equal is valid.
+A warranty whose purchase and end dates are equal is valid.
 
 ---
 
 # 6. Relationship Between Purchase and Warranty Dates
 
-The **only mandatory relationship between these three dates** is:
+The **only mandatory relationship between these two dates** is:
 
 ```text
-warrantyStartDate <= warrantyEndDate
+purchaseDate <= warrantyEndDate
 ```
 
-There is intentionally no required relationship between `purchaseDate` and the warranty range.
-
-Therefore, all of the following are valid:
-
-### Normal case
-
-```text
-purchaseDate      = 2026-01-10
-warrantyStartDate = 2026-01-10
-warrantyEndDate   = 2028-01-10
-```
-
-### Warranty starts after purchase
-
-```text
-purchaseDate      = 2026-01-10
-warrantyStartDate = 2026-01-15
-warrantyEndDate   = 2027-01-15
-```
-
-### Warranty starts before purchase
-
-```text
-purchaseDate      = 2026-01-10
-warrantyStartDate = 2026-01-01
-warrantyEndDate   = 2027-01-01
-```
-
-### Warranty ends before purchase
-
-```text
-purchaseDate      = 2026-01-10
-warrantyStartDate = 2025-01-01
-warrantyEndDate   = 2025-12-31
-```
-
-The last case is unusual, but it is **not invalid according to the current product rules**.
-
-The application must not reject it unless a future product decision explicitly introduces such a restriction.
+A warranty that ends before the product was purchased is invalid and the
+product must not be saved.
 
 ---
 
@@ -160,22 +121,20 @@ The most common scenario will normally look like:
 ```text
 purchaseDate
       ↓
-warrantyStartDate
-      ↓
 warrantyEndDate
 ```
 
 For example:
 
 ```text
-purchaseDate      = 2026-01-10
-warrantyStartDate = 2026-01-10
-warrantyEndDate   = 2028-01-10
+purchaseDate    = 2026-01-10
+warrantyEndDate = 2028-01-10
 ```
 
 However, this is a **typical scenario, not a validation rule**.
 
-The implementation must not assume that the dates always follow this order.
+The implementation must not assume that the warranty always lasts a fixed
+number of years.
 
 ---
 
@@ -183,7 +142,7 @@ The implementation must not assume that the dates always follow this order.
 
 Warranty status is derived from:
 
-* `warrantyStartDate`
+* `purchaseDate`
 * `warrantyEndDate`
 * The current calendar date.
 
@@ -194,8 +153,6 @@ The supported statuses are:
 * `future`
 * `active`
 * `expired`
-
-The `purchaseDate` does not participate in the warranty status calculation.
 
 ---
 
@@ -208,15 +165,15 @@ Use calendar-date comparison rather than time-of-day comparison.
 A warranty is `future` when:
 
 ```text
-today < warrantyStartDate
+today < purchaseDate
 ```
 
 Example:
 
 ```text
-today             = 2026-01-10
-warrantyStartDate = 2026-01-15
-warrantyEndDate   = 2027-01-15
+today           = 2026-01-10
+purchaseDate    = 2026-01-15
+warrantyEndDate = 2027-01-15
 
 status = future
 ```
@@ -228,25 +185,25 @@ status = future
 A warranty is `active` when:
 
 ```text
-warrantyStartDate <= today <= warrantyEndDate
+purchaseDate <= today <= warrantyEndDate
 ```
 
 Example:
 
 ```text
-today             = 2026-06-10
-warrantyStartDate = 2026-01-15
-warrantyEndDate   = 2027-01-15
+today           = 2026-06-10
+purchaseDate    = 2026-01-15
+warrantyEndDate = 2027-01-15
 
 status = active
 ```
 
-The start and end dates are inclusive.
+The purchase and end dates are inclusive.
 
 Therefore:
 
 ```text
-today == warrantyStartDate
+today == purchaseDate
 ```
 
 is `active`.
@@ -272,9 +229,9 @@ today > warrantyEndDate
 Example:
 
 ```text
-today             = 2028-01-16
-warrantyStartDate = 2026-01-15
-warrantyEndDate   = 2028-01-15
+today           = 2028-01-16
+purchaseDate    = 2026-01-15
+warrantyEndDate = 2028-01-15
 
 status = expired
 ```
@@ -286,7 +243,7 @@ status = expired
 Warranty status should conceptually follow:
 
 ```text
-if today < warrantyStartDate
+if today < purchaseDate
     → future
 
 else if today <= warrantyEndDate
@@ -323,12 +280,11 @@ A product purchased on a given calendar date should remain associated with that 
 The product form should allow users to enter:
 
 * Purchase date.
-* Warranty start date.
 * Warranty end date.
 
 Date pickers should be preferred over free-form date text where appropriate.
 
-The UI should clearly distinguish the three dates.
+The UI should clearly distinguish the two dates.
 
 ---
 
@@ -338,27 +294,12 @@ The minimum required validation is:
 
 ```text
 purchaseDate != null
-warrantyStartDate != null
 warrantyEndDate != null
 
-warrantyStartDate <= warrantyEndDate
-```
-
-There is intentionally **no validation rule** requiring:
-
-```text
-purchaseDate <= warrantyStartDate
-```
-
-or:
-
-```text
 purchaseDate <= warrantyEndDate
 ```
 
-These relationships may be unusual in some cases, but they are not invalid under the current business rules.
-
-If `warrantyStartDate > warrantyEndDate`, the product must not be saved.
+If `warrantyEndDate < purchaseDate`, the product must not be saved.
 
 The application should provide a clear validation message to the user.
 
@@ -368,8 +309,7 @@ The application should provide a clear validation message to the user.
 
 When a product is edited:
 
-* Changing `purchaseDate` must not automatically change warranty dates.
-* Changing `warrantyStartDate` must not automatically change `purchaseDate`.
+* Changing `purchaseDate` must not automatically change the warranty end date.
 * Changing `warrantyEndDate` must not automatically change `purchaseDate`.
 * Changing warranty dates must cause the derived warranty status to update.
 
@@ -382,15 +322,13 @@ The application must not silently modify one date because another date changed.
 Warranty duration is derived from:
 
 ```text
-warrantyStartDate
+purchaseDate
 warrantyEndDate
 ```
 
 It must not be stored separately.
 
-Changing either warranty date changes the derived duration automatically.
-
-`purchaseDate` does not determine warranty duration.
+Changing either date changes the derived duration automatically.
 
 ---
 
@@ -399,24 +337,10 @@ Changing either warranty date changes the derived duration automatically.
 The following relationship is invalid:
 
 ```text
-warrantyStartDate > warrantyEndDate
-```
-
-The following relationships are valid under the current rules:
-
-```text
-purchaseDate > warrantyStartDate
 purchaseDate > warrantyEndDate
-warrantyStartDate > purchaseDate
 ```
 
-They may be unusual, but the application must not reject them without an explicit product requirement.
-
-The only invalid ordering rule between the three dates is:
-
-```text
-warrantyStartDate > warrantyEndDate
-```
+It is the only invalid date-order relationship.
 
 ---
 
@@ -431,12 +355,10 @@ purchaseDate
 The source of truth for warranty status is:
 
 ```text
-warrantyStartDate
+purchaseDate
 warrantyEndDate
 current calendar date
 ```
-
-The purchase date is **not** part of the warranty status calculation.
 
 No derived warranty status or duration should be persisted as independent data.
 
@@ -449,61 +371,37 @@ Date-related business logic should have tests covering at least:
 ### Normal purchase and warranty dates
 
 ```text
-purchaseDate = 2026-01-10
-start        = 2026-01-10
-end          = 2028-01-10
+purchaseDate    = 2026-01-10
+end             = 2028-01-10
 
 → valid
 ```
 
-### Warranty starts after purchase
+### Same-day warranty
 
 ```text
-purchaseDate = 2026-01-10
-start        = 2026-01-15
-end          = 2027-01-15
+purchaseDate    = 2026-01-10
+end             = 2026-01-10
 
 → valid
 ```
-
-### Warranty starts before purchase
-
-```text
-purchaseDate = 2026-01-10
-start        = 2026-01-01
-end          = 2027-01-01
-
-→ valid
-```
-
-### Warranty ends before purchase
-
-```text
-purchaseDate = 2026-01-10
-start        = 2025-01-01
-end          = 2025-12-31
-
-→ valid
-```
-
-This is unusual but intentionally allowed by the current rules.
 
 ### Future
 
 ```text
-today < start
+today < purchaseDate
 ```
 
-### Active at start
+### Active at purchase
 
 ```text
-today == start
+today == purchaseDate
 ```
 
 ### Active in the middle
 
 ```text
-start < today < end
+purchaseDate < today < end
 ```
 
 ### Active at end
@@ -518,16 +416,10 @@ today == end
 today > end
 ```
 
-### Same-day warranty
-
-```text
-start == end
-```
-
 ### Invalid range
 
 ```text
-start > end
+purchaseDate > end
 ```
 
 This is the only invalid date-order relationship.
@@ -546,33 +438,24 @@ This ensures that an `active` warranty automatically becomes `expired` when the 
 
 # 20. Final Rule
 
-The purchase date and warranty dates represent independent concepts.
+The purchase date is the start of the warranty coverage.
 
 The only required ordering rule is:
 
 ```text
-warrantyStartDate <= warrantyEndDate
+purchaseDate <= warrantyEndDate
 ```
 
-The purchase date may occur:
-
-* Before the warranty starts.
-* On the warranty start date.
-* During the warranty period.
-* After the warranty ends.
-
-These cases are all valid under the current data model.
-
-Warranty status is derived exclusively from the warranty dates and the current calendar date:
+Warranty status is derived exclusively from the purchase date, the warranty end date and the current calendar date:
 
 ```text
-today < start
+today < purchaseDate
     → future
 
-start <= today <= end
+purchaseDate <= today <= warrantyEndDate
     → active
 
-today > end
+today > warrantyEndDate
     → expired
 ```
 

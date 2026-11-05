@@ -16,11 +16,20 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async => m.createAll(),
-    onUpgrade: (m, from, to) async {},
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // The warranty start date was replaced by the purchase date, so the
+        // column is no longer part of the model. Dropping it keeps the stored
+        // rows intact.
+        await m.database.customStatement(
+          'ALTER TABLE products DROP COLUMN warranty_start_date',
+        );
+      }
+    },
   );
 }

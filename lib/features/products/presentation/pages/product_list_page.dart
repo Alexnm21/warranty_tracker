@@ -8,6 +8,7 @@ import '../../../../app/router/route_names.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/product_list_cubit.dart';
 import '../bloc/product_list_state.dart';
@@ -90,7 +91,36 @@ class _ProductListContentState extends State<_ProductListContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('products.title'.tr())),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(AppSpacing.smm),
+              margin: EdgeInsets.only(
+                left: AppSpacing.md,
+                right: AppSpacing.sm,
+              ),
+              child: SvgIcon(iconName: 'warranty_tracker_outlined'),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('products.title'.tr()),
+                BlocBuilder<ProductListCubit, ProductListState>(
+                  builder: (context, state) {
+                    return Text(
+                      '${state.products.length} ${'products.title'.tr().toLowerCase()}',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openCreate,
         child: const Icon(Icons.add),

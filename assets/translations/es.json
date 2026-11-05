@@ -42,7 +42,6 @@
       "serialNumber": "Número de serie",
       "notes": "Notas",
       "warranty": "Garantía",
-      "warrantyStartDate": "Inicio de garantía",
       "warrantyEndDate": "Fin de garantía",
       "notFound": "Producto no encontrado"
     },
@@ -59,19 +58,29 @@
       "price": "Precio",
       "currency": "Moneda",
       "serialNumber": "Número de serie",
-      "warrantyStartDate": "Inicio de garantía",
       "warrantyEndDate": "Fin de garantía",
       "notes": "Notas",
       "save": "Guardar",
       "error": {
         "nameRequired": "El nombre es obligatorio",
         "purchaseDateRequired": "La fecha de compra es obligatoria",
-        "warrantyStartRequired": "El inicio de garantía es obligatorio",
         "warrantyEndRequired": "El fin de garantía es obligatorio",
-        "warrantyEndBeforeStart": "El fin de garantía debe ser igual o posterior al inicio",
+        "warrantyEndBeforePurchase": "El fin de garantía debe ser igual o posterior a la fecha de compra",
         "priceInvalid": "Introduce un precio válido no negativo",
         "currencyRequired": "La moneda es obligatoria si hay precio"
-      }
+      },
+      "section": {
+        "purchase": "Información de compra",
+        "warranty": "Información de garantía",
+        "documents": "Documentos adjuntos"
+      },
+      "duration": "Duration de Garantía",
+      "years": {
+        "one": "{} año",
+        "other": "{} años"
+      },
+      "custom": "Otro",
+      "calculated_date": "Fecha de Expiración Calculada"
     },
     "warranty": {
       "status": {

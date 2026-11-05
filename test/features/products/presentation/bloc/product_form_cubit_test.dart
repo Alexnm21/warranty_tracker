@@ -7,13 +7,11 @@ import '../fakes/fake_product_repository.dart';
 
 void main() {
   final purchaseDate = DateTime(2026, 1, 5);
-  final start = DateTime(2026, 1, 5);
   final end = DateTime(2027, 1, 5);
 
   ProductFormData validData() => ProductFormData(
     name: 'Laptop',
     purchaseDate: purchaseDate,
-    warrantyStartDate: start,
     warrantyEndDate: end,
   );
 
@@ -78,25 +76,23 @@ void main() {
       await cubit.save(const ProductFormData(name: 'Laptop'));
 
       expect(cubit.state.errors[ProductFormField.purchaseDate], isNotNull);
-      expect(cubit.state.errors[ProductFormField.warrantyStartDate], isNotNull);
       expect(cubit.state.errors[ProductFormField.warrantyEndDate], isNotNull);
     });
 
-    test('rejects a warranty end before its start', () async {
+    test('rejects a warranty end before the purchase date', () async {
       final cubit = ProductFormCubit(FakeProductRepository());
 
       await cubit.save(
         ProductFormData(
           name: 'Laptop',
           purchaseDate: purchaseDate,
-          warrantyStartDate: DateTime(2027, 1, 5),
-          warrantyEndDate: DateTime(2026, 1, 5),
+          warrantyEndDate: DateTime(2025, 12, 31),
         ),
       );
 
       expect(
         cubit.state.errors[ProductFormField.warrantyEndDate],
-        'products.form.error.warrantyEndBeforeStart',
+        'products.form.error.warrantyEndBeforePurchase',
       );
     });
 
@@ -195,7 +191,6 @@ extension on ProductFormData {
       priceText: priceText ?? this.priceText,
       currency: currency ?? this.currency,
       serialNumber: serialNumber,
-      warrantyStartDate: warrantyStartDate,
       warrantyEndDate: warrantyEndDate,
       notes: notes,
     );

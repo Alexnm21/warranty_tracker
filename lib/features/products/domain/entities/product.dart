@@ -11,7 +11,6 @@ class Product {
     this.price,
     this.currency,
     this.serialNumber,
-    this.warrantyStartDate,
     this.warrantyEndDate,
     this.notes,
     this.createdAt,
@@ -27,14 +26,15 @@ class Product {
   final int? price;
   final String? currency;
   final String? serialNumber;
-  final DateTime? warrantyStartDate;
   final DateTime? warrantyEndDate;
   final String? notes;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  /// Warranty status derived from the purchase date (warranty start) and the
+  /// warranty end date, both inclusive.
   WarrantyStatus get warrantyStatus {
-    return WarrantyStatus.fromDates(warrantyStartDate, warrantyEndDate);
+    return WarrantyStatus.fromDates(purchaseDate, warrantyEndDate);
   }
 
   Product copyWith({
@@ -47,7 +47,6 @@ class Product {
     int? price,
     String? currency,
     String? serialNumber,
-    DateTime? warrantyStartDate,
     DateTime? warrantyEndDate,
     String? notes,
     DateTime? createdAt,
@@ -63,7 +62,6 @@ class Product {
       price: price ?? this.price,
       currency: currency ?? this.currency,
       serialNumber: serialNumber ?? this.serialNumber,
-      warrantyStartDate: warrantyStartDate ?? this.warrantyStartDate,
       warrantyEndDate: warrantyEndDate ?? this.warrantyEndDate,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,

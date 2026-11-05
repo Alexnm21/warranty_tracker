@@ -20,8 +20,6 @@ class Products extends Table {
 
   TextColumn get serialNumber => text().nullable()();
 
-  DateTimeColumn get warrantyStartDate => dateTime()();
-
   DateTimeColumn get warrantyEndDate => dateTime()();
 
   TextColumn get notes => text().nullable()();

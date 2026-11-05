@@ -172,11 +172,6 @@ class _ProductDetails extends StatelessWidget {
         _Section(
           title: 'products.detail.warranty'.tr(),
           rows: [
-            if (product.warrantyStartDate != null)
-              MapEntry(
-                'products.detail.warrantyStartDate'.tr(),
-                formatDate(context, product.warrantyStartDate!),
-              ),
             if (product.warrantyEndDate != null)
               MapEntry(
                 'products.detail.warrantyEndDate'.tr(),

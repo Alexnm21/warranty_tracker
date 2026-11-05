@@ -42,7 +42,6 @@
       "serialNumber": "Serial number",
       "notes": "Notes",
       "warranty": "Warranty",
-      "warrantyStartDate": "Warranty start",
       "warrantyEndDate": "Warranty end",
       "notFound": "Product not found"
     },
@@ -59,19 +58,29 @@
       "price": "Price",
       "currency": "Currency",
       "serialNumber": "Serial number",
-      "warrantyStartDate": "Warranty start",
       "warrantyEndDate": "Warranty end",
       "notes": "Notes",
       "save": "Save",
       "error": {
         "nameRequired": "Name is required",
         "purchaseDateRequired": "Purchase date is required",
-        "warrantyStartRequired": "Warranty start is required",
         "warrantyEndRequired": "Warranty end is required",
-        "warrantyEndBeforeStart": "Warranty end must be on or after the start",
+        "warrantyEndBeforePurchase": "Warranty end must be on or after the purchase date",
         "priceInvalid": "Enter a valid non-negative price",
         "currencyRequired": "Currency is required when a price is set"
-      }
+      },
+      "section": {
+        "purchase": "Purchase Information",
+        "warranty": "Warranty Information",
+        "documents": "Attached Documents"
+      },
+      "duration": "Warranty Duration",
+      "years": {
+        "one": "{} year",
+        "other": "{} years"
+      },
+      "custom": "Custom",
+      "calculated_date": "Calculated Expiry Date"
     },
     "warranty": {
       "status": {

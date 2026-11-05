@@ -16,7 +16,6 @@ class ProductFormData {
     this.priceText = '',
     this.currency,
     this.serialNumber,
-    this.warrantyStartDate,
     this.warrantyEndDate,
     this.notes,
   });
@@ -29,7 +28,6 @@ class ProductFormData {
   final String priceText;
   final String? currency;
   final String? serialNumber;
-  final DateTime? warrantyStartDate;
   final DateTime? warrantyEndDate;
   final String? notes;
 }
@@ -107,17 +105,13 @@ class ProductFormCubit extends Cubit<ProductFormState> {
       errors[ProductFormField.purchaseDate] =
           'products.form.error.purchaseDateRequired';
     }
-    if (data.warrantyStartDate == null) {
-      errors[ProductFormField.warrantyStartDate] =
-          'products.form.error.warrantyStartRequired';
-    }
     if (data.warrantyEndDate == null) {
       errors[ProductFormField.warrantyEndDate] =
           'products.form.error.warrantyEndRequired';
-    } else if (data.warrantyStartDate != null &&
-        data.warrantyEndDate!.isBefore(data.warrantyStartDate!)) {
+    } else if (data.purchaseDate != null &&
+        data.warrantyEndDate!.isBefore(data.purchaseDate!)) {
       errors[ProductFormField.warrantyEndDate] =
-          'products.form.error.warrantyEndBeforeStart';
+          'products.form.error.warrantyEndBeforePurchase';
     }
 
     final priceText = data.priceText.trim();
@@ -154,7 +148,6 @@ class ProductFormCubit extends Cubit<ProductFormState> {
       price: price,
       currency: price == null ? null : currency,
       serialNumber: _nullIfEmpty(data.serialNumber),
-      warrantyStartDate: data.warrantyStartDate,
       warrantyEndDate: data.warrantyEndDate,
       notes: _nullIfEmpty(data.notes),
       createdAt: existing?.createdAt,

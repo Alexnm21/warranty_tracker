@@ -5,7 +5,6 @@ import 'package:warranty_tracker/features/products/domain/entities/product.dart'
 
 void main() {
   final purchaseDate = DateTime(2026, 1, 5);
-  final start = DateTime(2026, 1, 5);
   final end = DateTime(2027, 1, 5);
   final createdAt = DateTime(2026, 1, 5, 10);
   final updatedAt = DateTime(2026, 1, 6, 11);
@@ -21,7 +20,6 @@ void main() {
       price: 89999,
       currency: 'EUR',
       serialNumber: 'SN-123',
-      warrantyStartDate: start,
       warrantyEndDate: end,
       notes: 'Some notes',
       createdAt: createdAt,
@@ -42,7 +40,6 @@ void main() {
       expect(product.price, 89999);
       expect(product.currency, 'EUR');
       expect(product.serialNumber, 'SN-123');
-      expect(product.warrantyStartDate, start);
       expect(product.warrantyEndDate, end);
       expect(product.notes, 'Some notes');
       expect(product.createdAt, createdAt);
@@ -63,7 +60,6 @@ void main() {
           price: 89999,
           currency: 'EUR',
           serialNumber: 'SN-123',
-          warrantyStartDate: start,
           warrantyEndDate: end,
           notes: 'Some notes',
           createdAt: createdAt,
@@ -80,7 +76,6 @@ void main() {
       expect(row.price, 89999);
       expect(row.currency, 'EUR');
       expect(row.serialNumber, 'SN-123');
-      expect(row.warrantyStartDate, start);
       expect(row.warrantyEndDate, end);
       expect(row.notes, 'Some notes');
       expect(row.createdAt, createdAt);
@@ -93,7 +88,6 @@ void main() {
           id: 2,
           name: 'Charger',
           purchaseDate: purchaseDate,
-          warrantyStartDate: start,
           warrantyEndDate: end,
           createdAt: createdAt,
           updatedAt: updatedAt,
@@ -119,7 +113,6 @@ void main() {
           purchaseDate: purchaseDate,
           price: 89999,
           currency: 'EUR',
-          warrantyStartDate: start,
           warrantyEndDate: end,
           createdAt: createdAt,
           updatedAt: updatedAt,
@@ -131,7 +124,6 @@ void main() {
       expect(companion.purchaseDate.value, purchaseDate);
       expect(companion.price.value, 89999);
       expect(companion.currency.value, 'EUR');
-      expect(companion.warrantyStartDate.value, start);
       expect(companion.warrantyEndDate.value, end);
     });
   });

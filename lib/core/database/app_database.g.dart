@@ -100,18 +100,6 @@ class $ProductsTable extends Products
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _warrantyStartDateMeta = const VerificationMeta(
-    'warrantyStartDate',
-  );
-  @override
-  late final GeneratedColumn<DateTime> warrantyStartDate =
-      GeneratedColumn<DateTime>(
-        'warranty_start_date',
-        aliasedName,
-        false,
-        type: DriftSqlType.dateTime,
-        requiredDuringInsert: true,
-      );
   static const VerificationMeta _warrantyEndDateMeta = const VerificationMeta(
     'warrantyEndDate',
   );
@@ -166,7 +154,6 @@ class $ProductsTable extends Products
     price,
     currency,
     serialNumber,
-    warrantyStartDate,
     warrantyEndDate,
     notes,
     createdAt,
@@ -244,17 +231,6 @@ class $ProductsTable extends Products
           _serialNumberMeta,
         ),
       );
-    }
-    if (data.containsKey('warranty_start_date')) {
-      context.handle(
-        _warrantyStartDateMeta,
-        warrantyStartDate.isAcceptableOrUnknown(
-          data['warranty_start_date']!,
-          _warrantyStartDateMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_warrantyStartDateMeta);
     }
     if (data.containsKey('warranty_end_date')) {
       context.handle(
@@ -334,10 +310,6 @@ class $ProductsTable extends Products
         DriftSqlType.string,
         data['${effectivePrefix}serial_number'],
       ),
-      warrantyStartDate: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}warranty_start_date'],
-      )!,
       warrantyEndDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}warranty_end_date'],
@@ -373,7 +345,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
   final int? price;
   final String? currency;
   final String? serialNumber;
-  final DateTime warrantyStartDate;
   final DateTime warrantyEndDate;
   final String? notes;
   final DateTime createdAt;
@@ -388,7 +359,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     this.price,
     this.currency,
     this.serialNumber,
-    required this.warrantyStartDate,
     required this.warrantyEndDate,
     this.notes,
     required this.createdAt,
@@ -418,7 +388,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     if (!nullToAbsent || serialNumber != null) {
       map['serial_number'] = Variable<String>(serialNumber);
     }
-    map['warranty_start_date'] = Variable<DateTime>(warrantyStartDate);
     map['warranty_end_date'] = Variable<DateTime>(warrantyEndDate);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
@@ -451,7 +420,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       serialNumber: serialNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(serialNumber),
-      warrantyStartDate: Value(warrantyStartDate),
       warrantyEndDate: Value(warrantyEndDate),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
@@ -476,9 +444,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       price: serializer.fromJson<int?>(json['price']),
       currency: serializer.fromJson<String?>(json['currency']),
       serialNumber: serializer.fromJson<String?>(json['serialNumber']),
-      warrantyStartDate: serializer.fromJson<DateTime>(
-        json['warrantyStartDate'],
-      ),
       warrantyEndDate: serializer.fromJson<DateTime>(json['warrantyEndDate']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -498,7 +463,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       'price': serializer.toJson<int?>(price),
       'currency': serializer.toJson<String?>(currency),
       'serialNumber': serializer.toJson<String?>(serialNumber),
-      'warrantyStartDate': serializer.toJson<DateTime>(warrantyStartDate),
       'warrantyEndDate': serializer.toJson<DateTime>(warrantyEndDate),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -516,7 +480,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     Value<int?> price = const Value.absent(),
     Value<String?> currency = const Value.absent(),
     Value<String?> serialNumber = const Value.absent(),
-    DateTime? warrantyStartDate,
     DateTime? warrantyEndDate,
     Value<String?> notes = const Value.absent(),
     DateTime? createdAt,
@@ -531,7 +494,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     price: price.present ? price.value : this.price,
     currency: currency.present ? currency.value : this.currency,
     serialNumber: serialNumber.present ? serialNumber.value : this.serialNumber,
-    warrantyStartDate: warrantyStartDate ?? this.warrantyStartDate,
     warrantyEndDate: warrantyEndDate ?? this.warrantyEndDate,
     notes: notes.present ? notes.value : this.notes,
     createdAt: createdAt ?? this.createdAt,
@@ -552,9 +514,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       serialNumber: data.serialNumber.present
           ? data.serialNumber.value
           : this.serialNumber,
-      warrantyStartDate: data.warrantyStartDate.present
-          ? data.warrantyStartDate.value
-          : this.warrantyStartDate,
       warrantyEndDate: data.warrantyEndDate.present
           ? data.warrantyEndDate.value
           : this.warrantyEndDate,
@@ -576,7 +535,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           ..write('price: $price, ')
           ..write('currency: $currency, ')
           ..write('serialNumber: $serialNumber, ')
-          ..write('warrantyStartDate: $warrantyStartDate, ')
           ..write('warrantyEndDate: $warrantyEndDate, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
@@ -596,7 +554,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     price,
     currency,
     serialNumber,
-    warrantyStartDate,
     warrantyEndDate,
     notes,
     createdAt,
@@ -615,7 +572,6 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           other.price == this.price &&
           other.currency == this.currency &&
           other.serialNumber == this.serialNumber &&
-          other.warrantyStartDate == this.warrantyStartDate &&
           other.warrantyEndDate == this.warrantyEndDate &&
           other.notes == this.notes &&
           other.createdAt == this.createdAt &&
@@ -632,7 +588,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
   final Value<int?> price;
   final Value<String?> currency;
   final Value<String?> serialNumber;
-  final Value<DateTime> warrantyStartDate;
   final Value<DateTime> warrantyEndDate;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
@@ -647,7 +602,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     this.price = const Value.absent(),
     this.currency = const Value.absent(),
     this.serialNumber = const Value.absent(),
-    this.warrantyStartDate = const Value.absent(),
     this.warrantyEndDate = const Value.absent(),
     this.notes = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -663,14 +617,12 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     this.price = const Value.absent(),
     this.currency = const Value.absent(),
     this.serialNumber = const Value.absent(),
-    required DateTime warrantyStartDate,
     required DateTime warrantyEndDate,
     this.notes = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
   }) : name = Value(name),
        purchaseDate = Value(purchaseDate),
-       warrantyStartDate = Value(warrantyStartDate),
        warrantyEndDate = Value(warrantyEndDate),
        createdAt = Value(createdAt),
        updatedAt = Value(updatedAt);
@@ -684,7 +636,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Expression<int>? price,
     Expression<String>? currency,
     Expression<String>? serialNumber,
-    Expression<DateTime>? warrantyStartDate,
     Expression<DateTime>? warrantyEndDate,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
@@ -700,7 +651,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
       if (price != null) 'price': price,
       if (currency != null) 'currency': currency,
       if (serialNumber != null) 'serial_number': serialNumber,
-      if (warrantyStartDate != null) 'warranty_start_date': warrantyStartDate,
       if (warrantyEndDate != null) 'warranty_end_date': warrantyEndDate,
       if (notes != null) 'notes': notes,
       if (createdAt != null) 'created_at': createdAt,
@@ -718,7 +668,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Value<int?>? price,
     Value<String?>? currency,
     Value<String?>? serialNumber,
-    Value<DateTime>? warrantyStartDate,
     Value<DateTime>? warrantyEndDate,
     Value<String?>? notes,
     Value<DateTime>? createdAt,
@@ -734,7 +683,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
       price: price ?? this.price,
       currency: currency ?? this.currency,
       serialNumber: serialNumber ?? this.serialNumber,
-      warrantyStartDate: warrantyStartDate ?? this.warrantyStartDate,
       warrantyEndDate: warrantyEndDate ?? this.warrantyEndDate,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
@@ -772,9 +720,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     if (serialNumber.present) {
       map['serial_number'] = Variable<String>(serialNumber.value);
     }
-    if (warrantyStartDate.present) {
-      map['warranty_start_date'] = Variable<DateTime>(warrantyStartDate.value);
-    }
     if (warrantyEndDate.present) {
       map['warranty_end_date'] = Variable<DateTime>(warrantyEndDate.value);
     }
@@ -802,7 +747,6 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           ..write('price: $price, ')
           ..write('currency: $currency, ')
           ..write('serialNumber: $serialNumber, ')
-          ..write('warrantyStartDate: $warrantyStartDate, ')
           ..write('warrantyEndDate: $warrantyEndDate, ')
           ..write('notes: $notes, ')
           ..write('createdAt: $createdAt, ')
@@ -834,7 +778,6 @@ typedef $$ProductsTableCreateCompanionBuilder =
       Value<int?> price,
       Value<String?> currency,
       Value<String?> serialNumber,
-      required DateTime warrantyStartDate,
       required DateTime warrantyEndDate,
       Value<String?> notes,
       required DateTime createdAt,
@@ -851,7 +794,6 @@ typedef $$ProductsTableUpdateCompanionBuilder =
       Value<int?> price,
       Value<String?> currency,
       Value<String?> serialNumber,
-      Value<DateTime> warrantyStartDate,
       Value<DateTime> warrantyEndDate,
       Value<String?> notes,
       Value<DateTime> createdAt,
@@ -909,11 +851,6 @@ class $$ProductsTableFilterComposer
 
   ColumnFilters<String> get serialNumber => $composableBuilder(
     column: $table.serialNumber,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get warrantyStartDate => $composableBuilder(
-    column: $table.warrantyStartDate,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -992,11 +929,6 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<DateTime> get warrantyStartDate => $composableBuilder(
-    column: $table.warrantyStartDate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get warrantyEndDate => $composableBuilder(
     column: $table.warrantyEndDate,
     builder: (column) => ColumnOrderings(column),
@@ -1058,11 +990,6 @@ class $$ProductsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<DateTime> get warrantyStartDate => $composableBuilder(
-    column: $table.warrantyStartDate,
-    builder: (column) => column,
-  );
-
   GeneratedColumn<DateTime> get warrantyEndDate => $composableBuilder(
     column: $table.warrantyEndDate,
     builder: (column) => column,
@@ -1118,7 +1045,6 @@ class $$ProductsTableTableManager
                 Value<int?> price = const Value.absent(),
                 Value<String?> currency = const Value.absent(),
                 Value<String?> serialNumber = const Value.absent(),
-                Value<DateTime> warrantyStartDate = const Value.absent(),
                 Value<DateTime> warrantyEndDate = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -1133,7 +1059,6 @@ class $$ProductsTableTableManager
                 price: price,
                 currency: currency,
                 serialNumber: serialNumber,
-                warrantyStartDate: warrantyStartDate,
                 warrantyEndDate: warrantyEndDate,
                 notes: notes,
                 createdAt: createdAt,
@@ -1150,7 +1075,6 @@ class $$ProductsTableTableManager
                 Value<int?> price = const Value.absent(),
                 Value<String?> currency = const Value.absent(),
                 Value<String?> serialNumber = const Value.absent(),
-                required DateTime warrantyStartDate,
                 required DateTime warrantyEndDate,
                 Value<String?> notes = const Value.absent(),
                 required DateTime createdAt,
@@ -1165,7 +1089,6 @@ class $$ProductsTableTableManager
                 price: price,
                 currency: currency,
                 serialNumber: serialNumber,
-                warrantyStartDate: warrantyStartDate,
                 warrantyEndDate: warrantyEndDate,
                 notes: notes,
                 createdAt: createdAt,
