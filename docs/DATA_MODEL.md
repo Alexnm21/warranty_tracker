@@ -28,8 +28,8 @@ The inclusive end-date rule is defined in:
 
 # 2. Product
 
-`Product` is the central entity. Phase 1 uses a single `products` table; no
-additional tables are required.
+`Product` is the central entity. Phase 1 introduced the single `products`
+table; Phase 2 adds the `product_documents` table described in section 3.
 
 ## 2.1 Fields
 
@@ -124,3 +124,42 @@ warranty and an informational date (`DATA_RULES.md` §6).
   Changing dates never implicitly changes other dates (`DATA_RULES.md` §14).
 * Search is case-insensitive over `name`, `brand`, `model`, `store`, and
   `serialNumber`, executed by the database.
+
+---
+
+# 3. Product Documents
+
+A product document (domain entity `WarrantyDocument`) is a file attached to a
+product. A product can have multiple documents. Documents belong to the
+product rather than to a separate warranty record because the warranty status
+is derived from the product dates.
+
+## 3.1 Fields
+
+| Field         | Dart type        | SQLite type | Required | User entered | Notes                                              |
+| ------------- | ---------------- | ----------- | -------: | -----------: | -------------------------------------------------- |
+| `id`          | `int?`           | `INTEGER`   |      Yes |           No | Primary key, auto-increment                        |
+| `productId`   | `int?`           | `INTEGER`   |      Yes |           No | References `products.id`, `ON DELETE CASCADE`      |
+| `fileName`    | `String`         | `TEXT`      |      Yes |           No | Original file name shown to the user               |
+| `storagePath` | `String`         | `TEXT`      |      Yes |           No | Path relative to the application documents folder  |
+| `mimeType`    | `String`         | `TEXT`      |      Yes |           No | Validated MIME type                                |
+| `sizeBytes`   | `int`            | `INTEGER`   |      Yes |           No | File size in bytes                                 |
+| `source`      | `DocumentSource` | `TEXT`      |      Yes |           No | `scan`, `photo` or `file`                          |
+| `createdAt`   | `DateTime`       | `DATETIME`  |      Yes |           No | Set by the application when the document is saved  |
+
+## 3.2 File Storage
+
+* Document metadata is stored in SQLite; document files are stored outside the
+  database.
+* Files live at
+  `<application documents>/warranty_documents/<productId>/<storedName>`.
+* `storagePath` stores `warranty_documents/<productId>/<storedName>`. The
+  absolute path is resolved at runtime and never persisted.
+* Files selected or captured while editing are staged in
+  `<application documents>/warranty_documents/.staging` and moved into the
+  product folder only when the product is saved.
+* Supported file types are PDF, JPG/JPEG, PNG, HEIC, and WEBP. Each file is
+  limited to 25 MB.
+* Deleting a product cascades to its document metadata. Stored files are
+  removed by the documents repository as part of product deletion.
+

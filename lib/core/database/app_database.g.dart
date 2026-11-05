@@ -756,15 +756,546 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
   }
 }
 
+class $ProductDocumentsTable extends ProductDocuments
+    with TableInfo<$ProductDocumentsTable, ProductDocumentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProductDocumentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _productIdMeta = const VerificationMeta(
+    'productId',
+  );
+  @override
+  late final GeneratedColumn<int> productId = GeneratedColumn<int>(
+    'product_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES products (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _fileNameMeta = const VerificationMeta(
+    'fileName',
+  );
+  @override
+  late final GeneratedColumn<String> fileName = GeneratedColumn<String>(
+    'file_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _storagePathMeta = const VerificationMeta(
+    'storagePath',
+  );
+  @override
+  late final GeneratedColumn<String> storagePath = GeneratedColumn<String>(
+    'storage_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _mimeTypeMeta = const VerificationMeta(
+    'mimeType',
+  );
+  @override
+  late final GeneratedColumn<String> mimeType = GeneratedColumn<String>(
+    'mime_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sizeBytesMeta = const VerificationMeta(
+    'sizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> sizeBytes = GeneratedColumn<int>(
+    'size_bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    productId,
+    fileName,
+    storagePath,
+    mimeType,
+    sizeBytes,
+    source,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'product_documents';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ProductDocumentRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('product_id')) {
+      context.handle(
+        _productIdMeta,
+        productId.isAcceptableOrUnknown(data['product_id']!, _productIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_productIdMeta);
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(
+        _fileNameMeta,
+        fileName.isAcceptableOrUnknown(data['file_name']!, _fileNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_fileNameMeta);
+    }
+    if (data.containsKey('storage_path')) {
+      context.handle(
+        _storagePathMeta,
+        storagePath.isAcceptableOrUnknown(
+          data['storage_path']!,
+          _storagePathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_storagePathMeta);
+    }
+    if (data.containsKey('mime_type')) {
+      context.handle(
+        _mimeTypeMeta,
+        mimeType.isAcceptableOrUnknown(data['mime_type']!, _mimeTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_mimeTypeMeta);
+    }
+    if (data.containsKey('size_bytes')) {
+      context.handle(
+        _sizeBytesMeta,
+        sizeBytes.isAcceptableOrUnknown(data['size_bytes']!, _sizeBytesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sizeBytesMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ProductDocumentRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ProductDocumentRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      productId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}product_id'],
+      )!,
+      fileName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_name'],
+      )!,
+      storagePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_path'],
+      )!,
+      mimeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mime_type'],
+      )!,
+      sizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}size_bytes'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ProductDocumentsTable createAlias(String alias) {
+    return $ProductDocumentsTable(attachedDatabase, alias);
+  }
+}
+
+class ProductDocumentRow extends DataClass
+    implements Insertable<ProductDocumentRow> {
+  final int id;
+  final int productId;
+
+  /// Original file name shown to the user.
+  final String fileName;
+
+  /// Path relative to the application documents directory.
+  final String storagePath;
+  final String mimeType;
+  final int sizeBytes;
+
+  /// How the document was added: `scan`, `photo` or `file`.
+  final String source;
+  final DateTime createdAt;
+  const ProductDocumentRow({
+    required this.id,
+    required this.productId,
+    required this.fileName,
+    required this.storagePath,
+    required this.mimeType,
+    required this.sizeBytes,
+    required this.source,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['product_id'] = Variable<int>(productId);
+    map['file_name'] = Variable<String>(fileName);
+    map['storage_path'] = Variable<String>(storagePath);
+    map['mime_type'] = Variable<String>(mimeType);
+    map['size_bytes'] = Variable<int>(sizeBytes);
+    map['source'] = Variable<String>(source);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ProductDocumentsCompanion toCompanion(bool nullToAbsent) {
+    return ProductDocumentsCompanion(
+      id: Value(id),
+      productId: Value(productId),
+      fileName: Value(fileName),
+      storagePath: Value(storagePath),
+      mimeType: Value(mimeType),
+      sizeBytes: Value(sizeBytes),
+      source: Value(source),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ProductDocumentRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ProductDocumentRow(
+      id: serializer.fromJson<int>(json['id']),
+      productId: serializer.fromJson<int>(json['productId']),
+      fileName: serializer.fromJson<String>(json['fileName']),
+      storagePath: serializer.fromJson<String>(json['storagePath']),
+      mimeType: serializer.fromJson<String>(json['mimeType']),
+      sizeBytes: serializer.fromJson<int>(json['sizeBytes']),
+      source: serializer.fromJson<String>(json['source']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'productId': serializer.toJson<int>(productId),
+      'fileName': serializer.toJson<String>(fileName),
+      'storagePath': serializer.toJson<String>(storagePath),
+      'mimeType': serializer.toJson<String>(mimeType),
+      'sizeBytes': serializer.toJson<int>(sizeBytes),
+      'source': serializer.toJson<String>(source),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ProductDocumentRow copyWith({
+    int? id,
+    int? productId,
+    String? fileName,
+    String? storagePath,
+    String? mimeType,
+    int? sizeBytes,
+    String? source,
+    DateTime? createdAt,
+  }) => ProductDocumentRow(
+    id: id ?? this.id,
+    productId: productId ?? this.productId,
+    fileName: fileName ?? this.fileName,
+    storagePath: storagePath ?? this.storagePath,
+    mimeType: mimeType ?? this.mimeType,
+    sizeBytes: sizeBytes ?? this.sizeBytes,
+    source: source ?? this.source,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ProductDocumentRow copyWithCompanion(ProductDocumentsCompanion data) {
+    return ProductDocumentRow(
+      id: data.id.present ? data.id.value : this.id,
+      productId: data.productId.present ? data.productId.value : this.productId,
+      fileName: data.fileName.present ? data.fileName.value : this.fileName,
+      storagePath: data.storagePath.present
+          ? data.storagePath.value
+          : this.storagePath,
+      mimeType: data.mimeType.present ? data.mimeType.value : this.mimeType,
+      sizeBytes: data.sizeBytes.present ? data.sizeBytes.value : this.sizeBytes,
+      source: data.source.present ? data.source.value : this.source,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProductDocumentRow(')
+          ..write('id: $id, ')
+          ..write('productId: $productId, ')
+          ..write('fileName: $fileName, ')
+          ..write('storagePath: $storagePath, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    productId,
+    fileName,
+    storagePath,
+    mimeType,
+    sizeBytes,
+    source,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ProductDocumentRow &&
+          other.id == this.id &&
+          other.productId == this.productId &&
+          other.fileName == this.fileName &&
+          other.storagePath == this.storagePath &&
+          other.mimeType == this.mimeType &&
+          other.sizeBytes == this.sizeBytes &&
+          other.source == this.source &&
+          other.createdAt == this.createdAt);
+}
+
+class ProductDocumentsCompanion extends UpdateCompanion<ProductDocumentRow> {
+  final Value<int> id;
+  final Value<int> productId;
+  final Value<String> fileName;
+  final Value<String> storagePath;
+  final Value<String> mimeType;
+  final Value<int> sizeBytes;
+  final Value<String> source;
+  final Value<DateTime> createdAt;
+  const ProductDocumentsCompanion({
+    this.id = const Value.absent(),
+    this.productId = const Value.absent(),
+    this.fileName = const Value.absent(),
+    this.storagePath = const Value.absent(),
+    this.mimeType = const Value.absent(),
+    this.sizeBytes = const Value.absent(),
+    this.source = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  ProductDocumentsCompanion.insert({
+    this.id = const Value.absent(),
+    required int productId,
+    required String fileName,
+    required String storagePath,
+    required String mimeType,
+    required int sizeBytes,
+    required String source,
+    required DateTime createdAt,
+  }) : productId = Value(productId),
+       fileName = Value(fileName),
+       storagePath = Value(storagePath),
+       mimeType = Value(mimeType),
+       sizeBytes = Value(sizeBytes),
+       source = Value(source),
+       createdAt = Value(createdAt);
+  static Insertable<ProductDocumentRow> custom({
+    Expression<int>? id,
+    Expression<int>? productId,
+    Expression<String>? fileName,
+    Expression<String>? storagePath,
+    Expression<String>? mimeType,
+    Expression<int>? sizeBytes,
+    Expression<String>? source,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (productId != null) 'product_id': productId,
+      if (fileName != null) 'file_name': fileName,
+      if (storagePath != null) 'storage_path': storagePath,
+      if (mimeType != null) 'mime_type': mimeType,
+      if (sizeBytes != null) 'size_bytes': sizeBytes,
+      if (source != null) 'source': source,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  ProductDocumentsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? productId,
+    Value<String>? fileName,
+    Value<String>? storagePath,
+    Value<String>? mimeType,
+    Value<int>? sizeBytes,
+    Value<String>? source,
+    Value<DateTime>? createdAt,
+  }) {
+    return ProductDocumentsCompanion(
+      id: id ?? this.id,
+      productId: productId ?? this.productId,
+      fileName: fileName ?? this.fileName,
+      storagePath: storagePath ?? this.storagePath,
+      mimeType: mimeType ?? this.mimeType,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      source: source ?? this.source,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (productId.present) {
+      map['product_id'] = Variable<int>(productId.value);
+    }
+    if (fileName.present) {
+      map['file_name'] = Variable<String>(fileName.value);
+    }
+    if (storagePath.present) {
+      map['storage_path'] = Variable<String>(storagePath.value);
+    }
+    if (mimeType.present) {
+      map['mime_type'] = Variable<String>(mimeType.value);
+    }
+    if (sizeBytes.present) {
+      map['size_bytes'] = Variable<int>(sizeBytes.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProductDocumentsCompanion(')
+          ..write('id: $id, ')
+          ..write('productId: $productId, ')
+          ..write('fileName: $fileName, ')
+          ..write('storagePath: $storagePath, ')
+          ..write('mimeType: $mimeType, ')
+          ..write('sizeBytes: $sizeBytes, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProductsTable products = $ProductsTable(this);
+  late final $ProductDocumentsTable productDocuments = $ProductDocumentsTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [products];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    products,
+    productDocuments,
+  ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'products',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('product_documents', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$ProductsTableCreateCompanionBuilder =
@@ -799,6 +1330,31 @@ typedef $$ProductsTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
+
+final class $$ProductsTableReferences
+    extends BaseReferences<_$AppDatabase, $ProductsTable, ProductRow> {
+  $$ProductsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ProductDocumentsTable, List<ProductDocumentRow>>
+  _productDocumentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.productDocuments,
+    aliasName: 'products__id__product_documents__product_id',
+  );
+
+  $$ProductDocumentsTableProcessedTableManager get productDocumentsRefs {
+    final manager = $$ProductDocumentsTableTableManager(
+      $_db,
+      $_db.productDocuments,
+    ).filter((f) => f.productId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _productDocumentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$ProductsTableFilterComposer
     extends Composer<_$AppDatabase, $ProductsTable> {
@@ -873,6 +1429,31 @@ class $$ProductsTableFilterComposer
     column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> productDocumentsRefs(
+    Expression<bool> Function($$ProductDocumentsTableFilterComposer f) f,
+  ) {
+    final $$ProductDocumentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.productDocuments,
+      getReferencedColumn: (t) => t.productId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductDocumentsTableFilterComposer(
+            $db: $db,
+            $table: $db.productDocuments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProductsTableOrderingComposer
@@ -1003,6 +1584,31 @@ class $$ProductsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> productDocumentsRefs<T extends Object>(
+    Expression<T> Function($$ProductDocumentsTableAnnotationComposer a) f,
+  ) {
+    final $$ProductDocumentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.productDocuments,
+      getReferencedColumn: (t) => t.productId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductDocumentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.productDocuments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProductsTableTableManager
@@ -1016,12 +1622,9 @@ class $$ProductsTableTableManager
           $$ProductsTableAnnotationComposer,
           $$ProductsTableCreateCompanionBuilder,
           $$ProductsTableUpdateCompanionBuilder,
-          (
-            ProductRow,
-            BaseReferences<_$AppDatabase, $ProductsTable, ProductRow>,
-          ),
+          (ProductRow, $$ProductsTableReferences),
           ProductRow,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool productDocumentsRefs})
         > {
   $$ProductsTableTableManager(_$AppDatabase db, $ProductsTable table)
     : super(
@@ -1095,9 +1698,44 @@ class $$ProductsTableTableManager
                 updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ProductsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({productDocumentsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (productDocumentsRefs) db.productDocuments,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (productDocumentsRefs)
+                    await $_getPrefetchedData<
+                      ProductRow,
+                      $ProductsTable,
+                      ProductDocumentRow
+                    >(
+                      currentTable: table,
+                      referencedTable: $$ProductsTableReferences
+                          ._productDocumentsRefsTable(db),
+                      managerFromTypedResult: (p0) => $$ProductsTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).productDocumentsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.productId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -1112,9 +1750,392 @@ typedef $$ProductsTableProcessedTableManager =
       $$ProductsTableAnnotationComposer,
       $$ProductsTableCreateCompanionBuilder,
       $$ProductsTableUpdateCompanionBuilder,
-      (ProductRow, BaseReferences<_$AppDatabase, $ProductsTable, ProductRow>),
+      (ProductRow, $$ProductsTableReferences),
       ProductRow,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool productDocumentsRefs})
+    >;
+typedef $$ProductDocumentsTableCreateCompanionBuilder =
+    ProductDocumentsCompanion Function({
+      Value<int> id,
+      required int productId,
+      required String fileName,
+      required String storagePath,
+      required String mimeType,
+      required int sizeBytes,
+      required String source,
+      required DateTime createdAt,
+    });
+typedef $$ProductDocumentsTableUpdateCompanionBuilder =
+    ProductDocumentsCompanion Function({
+      Value<int> id,
+      Value<int> productId,
+      Value<String> fileName,
+      Value<String> storagePath,
+      Value<String> mimeType,
+      Value<int> sizeBytes,
+      Value<String> source,
+      Value<DateTime> createdAt,
+    });
+
+final class $$ProductDocumentsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ProductDocumentsTable,
+          ProductDocumentRow
+        > {
+  $$ProductDocumentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ProductsTable _productIdTable(_$AppDatabase db) =>
+      db.products.createAlias('product_documents__product_id__products__id');
+
+  $$ProductsTableProcessedTableManager get productId {
+    final $_column = $_itemColumn<int>('product_id')!;
+
+    final manager = $$ProductsTableTableManager(
+      $_db,
+      $_db.products,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_productIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ProductDocumentsTableFilterComposer
+    extends Composer<_$AppDatabase, $ProductDocumentsTable> {
+  $$ProductDocumentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fileName => $composableBuilder(
+    column: $table.fileName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storagePath => $composableBuilder(
+    column: $table.storagePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mimeType => $composableBuilder(
+    column: $table.mimeType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ProductsTableFilterComposer get productId {
+    final $$ProductsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productId,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableFilterComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProductDocumentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ProductDocumentsTable> {
+  $$ProductDocumentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fileName => $composableBuilder(
+    column: $table.fileName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storagePath => $composableBuilder(
+    column: $table.storagePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mimeType => $composableBuilder(
+    column: $table.mimeType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sizeBytes => $composableBuilder(
+    column: $table.sizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ProductsTableOrderingComposer get productId {
+    final $$ProductsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productId,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableOrderingComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProductDocumentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ProductDocumentsTable> {
+  $$ProductDocumentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get fileName =>
+      $composableBuilder(column: $table.fileName, builder: (column) => column);
+
+  GeneratedColumn<String> get storagePath => $composableBuilder(
+    column: $table.storagePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mimeType =>
+      $composableBuilder(column: $table.mimeType, builder: (column) => column);
+
+  GeneratedColumn<int> get sizeBytes =>
+      $composableBuilder(column: $table.sizeBytes, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$ProductsTableAnnotationComposer get productId {
+    final $$ProductsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productId,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ProductDocumentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ProductDocumentsTable,
+          ProductDocumentRow,
+          $$ProductDocumentsTableFilterComposer,
+          $$ProductDocumentsTableOrderingComposer,
+          $$ProductDocumentsTableAnnotationComposer,
+          $$ProductDocumentsTableCreateCompanionBuilder,
+          $$ProductDocumentsTableUpdateCompanionBuilder,
+          (ProductDocumentRow, $$ProductDocumentsTableReferences),
+          ProductDocumentRow,
+          PrefetchHooks Function({bool productId})
+        > {
+  $$ProductDocumentsTableTableManager(
+    _$AppDatabase db,
+    $ProductDocumentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProductDocumentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProductDocumentsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProductDocumentsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> productId = const Value.absent(),
+                Value<String> fileName = const Value.absent(),
+                Value<String> storagePath = const Value.absent(),
+                Value<String> mimeType = const Value.absent(),
+                Value<int> sizeBytes = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => ProductDocumentsCompanion(
+                id: id,
+                productId: productId,
+                fileName: fileName,
+                storagePath: storagePath,
+                mimeType: mimeType,
+                sizeBytes: sizeBytes,
+                source: source,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int productId,
+                required String fileName,
+                required String storagePath,
+                required String mimeType,
+                required int sizeBytes,
+                required String source,
+                required DateTime createdAt,
+              }) => ProductDocumentsCompanion.insert(
+                id: id,
+                productId: productId,
+                fileName: fileName,
+                storagePath: storagePath,
+                mimeType: mimeType,
+                sizeBytes: sizeBytes,
+                source: source,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ProductDocumentsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({productId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (productId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.productId,
+                                referencedTable:
+                                    $$ProductDocumentsTableReferences
+                                        ._productIdTable(db),
+                                referencedColumn:
+                                    $$ProductDocumentsTableReferences
+                                        ._productIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ProductDocumentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ProductDocumentsTable,
+      ProductDocumentRow,
+      $$ProductDocumentsTableFilterComposer,
+      $$ProductDocumentsTableOrderingComposer,
+      $$ProductDocumentsTableAnnotationComposer,
+      $$ProductDocumentsTableCreateCompanionBuilder,
+      $$ProductDocumentsTableUpdateCompanionBuilder,
+      (ProductDocumentRow, $$ProductDocumentsTableReferences),
+      ProductDocumentRow,
+      PrefetchHooks Function({bool productId})
     >;
 
 class $AppDatabaseManager {
@@ -1122,4 +2143,6 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$ProductsTableTableManager get products =>
       $$ProductsTableTableManager(_db, _db.products);
+  $$ProductDocumentsTableTableManager get productDocuments =>
+      $$ProductDocumentsTableTableManager(_db, _db.productDocuments);
 }

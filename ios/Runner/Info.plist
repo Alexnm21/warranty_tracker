@@ -14,6 +14,11 @@
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
+		<key>CFBundleLocalizations</key>
+		<array>
+			<string>en</string>
+			<string>es</string>
+		</array>
 		<key>CFBundleName</key>
 		<string>warranty_tracker</string>
 		<key>CFBundlePackageType</key>
@@ -26,6 +31,8 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSCameraUsageDescription</key>
+		<string>The camera is used to scan warranty documents and take photos of them.</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>

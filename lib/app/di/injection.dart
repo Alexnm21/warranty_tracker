@@ -1,6 +1,10 @@
 import 'package:get_it/get_it.dart';
 
 import '../../core/database/app_database.dart';
+import '../../features/documents/data/daos/document_dao.dart';
+import '../../features/documents/data/repositories/document_repository_impl.dart';
+import '../../features/documents/data/services/document_file_storage.dart';
+import '../../features/documents/domain/repositories/document_repository.dart';
 import '../../features/products/data/daos/product_dao.dart';
 import '../../features/products/data/repositories/product_repository_impl.dart';
 import '../../features/products/domain/repositories/product_repository.dart';
@@ -19,6 +23,17 @@ void setupInjection({AppDatabase? database}) {
 
   getIt.registerLazySingleton<ProductRepository>(
     () => ProductRepositoryImpl(getIt<ProductDao>()),
+  );
+
+  getIt.registerLazySingleton<DocumentDao>(
+    () => DocumentDao(getIt<AppDatabase>()),
+  );
+  getIt.registerLazySingleton<DocumentFileStorage>(() => DocumentFileStorage());
+  getIt.registerLazySingleton<DocumentRepository>(
+    () => DocumentRepositoryImpl(
+      getIt<DocumentDao>(),
+      getIt<DocumentFileStorage>(),
+    ),
   );
 
   getIt.registerFactory<ProductListCubit>(
