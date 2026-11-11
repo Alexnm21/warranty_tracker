@@ -7,6 +7,7 @@ import 'package:warranty_tracker/features/documents/domain/entities/warranty_doc
 import 'package:warranty_tracker/features/products/domain/entities/product.dart';
 import 'package:warranty_tracker/features/products/presentation/bloc/product_detail_cubit.dart';
 import 'package:warranty_tracker/features/products/presentation/pages/product_detail_page.dart';
+import 'package:warranty_tracker/features/products/presentation/widgets/warranty_document_tile.dart';
 
 import '../../../../helpers/pump_localized.dart';
 import '../fakes/fake_document_opener.dart';
@@ -84,6 +85,50 @@ void main() {
       find.text('No app is available to open this document'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('deletes a document after confirmation', (tester) async {
+    documentRepository = FakeDocumentRepository([_document()]);
+
+    await pumpLocalized(tester, const ProductDetailPage(productId: 1));
+    await scrollTo(tester, find.text('receipt.pdf'));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(WarrantyDocumentTile),
+        matching: find.byIcon(Icons.delete_outline),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Delete document'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('receipt.pdf'), findsNothing);
+    expect(find.text('No documents attached'), findsOneWidget);
+    expect(documentRepository.documents, isEmpty);
+  });
+
+  testWidgets('keeps the document when deletion is cancelled', (tester) async {
+    documentRepository = FakeDocumentRepository([_document()]);
+
+    await pumpLocalized(tester, const ProductDetailPage(productId: 1));
+    await scrollTo(tester, find.text('receipt.pdf'));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(WarrantyDocumentTile),
+        matching: find.byIcon(Icons.delete_outline),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('receipt.pdf'), findsOneWidget);
+    expect(documentRepository.documents, hasLength(1));
   });
 
   testWidgets('shows a load error and retries', (tester) async {

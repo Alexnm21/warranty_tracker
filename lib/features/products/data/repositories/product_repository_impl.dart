@@ -1,12 +1,16 @@
+import 'dart:developer';
+
+import '../../../documents/domain/repositories/document_repository.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../daos/product_dao.dart';
 import '../mappers/product_mapper.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  ProductRepositoryImpl(this._dao);
+  ProductRepositoryImpl(this._dao, this._documents);
 
   final ProductDao _dao;
+  final DocumentRepository _documents;
 
   @override
   Future<List<Product>> getAll() async {
@@ -42,7 +46,22 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<void> delete(int id) => _dao.deleteById(id);
+  Future<void> delete(int id) async {
+    await _dao.deleteById(id);
+
+    try {
+      await _documents.deleteStoredFilesForProduct(id);
+    } on Exception catch (error) {
+      // The product row is already gone, so a failed cleanup must not turn a
+      // completed deletion into a user-visible error. The orphaned folder can
+      // be cleaned up later.
+      log(
+        'Could not delete the stored documents of product $id',
+        name: 'ProductRepositoryImpl',
+        error: error,
+      );
+    }
+  }
 
   @override
   Future<List<Product>> search(String query) async {

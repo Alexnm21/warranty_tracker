@@ -9,7 +9,7 @@ import '../../../documents/domain/entities/warranty_document.dart';
 /// A tappable row that represents a stored warranty document.
 ///
 /// Used by the form to open/remove staged and persisted documents, and by the
-/// detail screen as a read-only list with the open action only.
+/// detail screen to open and delete persisted documents.
 class WarrantyDocumentTile extends StatelessWidget {
   const WarrantyDocumentTile({
     super.key,
@@ -101,7 +101,7 @@ class WarrantyDocumentTile extends StatelessWidget {
                           await onRemove!();
                         },
                   icon: const Icon(Icons.delete_outline, size: 20),
-                  tooltip: 'products.form.documents.remove.action'.tr(),
+                  tooltip: 'documents.remove.action'.tr(),
                   color: AppColors.error,
                 ),
             ],

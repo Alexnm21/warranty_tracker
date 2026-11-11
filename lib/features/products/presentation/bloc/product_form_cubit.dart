@@ -185,9 +185,7 @@ class ProductFormCubit extends Cubit<ProductFormState> {
         documents: state.documents
             .where((item) => item.filePath != document.filePath)
             .toList(),
-        documentError: deleteFailed
-            ? 'products.form.documents.error.delete'
-            : null,
+        documentError: deleteFailed ? 'documents.error.delete' : null,
         clearDocumentError: !deleteFailed,
       ),
     );

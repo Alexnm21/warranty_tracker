@@ -102,10 +102,10 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byTooltip('Remove'));
+    await tester.tap(find.byTooltip('Delete'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Remove document'), findsOneWidget);
+    expect(find.text('Delete document'), findsOneWidget);
     expect(
       find.text('Remove "receipt.pdf"? The file will be discarded.'),
       findsOneWidget,
@@ -130,7 +130,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byTooltip('Remove'));
+    await tester.tap(find.byTooltip('Delete'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();

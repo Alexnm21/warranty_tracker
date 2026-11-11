@@ -9,73 +9,8 @@ import 'package:warranty_tracker/app/app.dart';
 import 'package:warranty_tracker/app/di/injection.dart';
 import 'package:warranty_tracker/core/database/app_database.dart';
 import 'package:warranty_tracker/features/products/presentation/pages/product_detail_page.dart';
-import 'package:warranty_tracker/features/products/presentation/pages/product_form_page.dart';
-import 'package:warranty_tracker/features/products/presentation/pages/product_list_page.dart';
 
-/// Scopes a finder to the shell bottom navigation bar.
-Finder inShell(Finder child) =>
-    find.descendant(of: find.byType(NavigationBar), matching: child);
-
-/// Scopes a finder to the product form (create/edit) page.
-Finder inForm(Finder child) =>
-    find.descendant(of: find.byType(ProductFormPage), matching: child);
-
-/// Scopes a finder to the product list page.
-Finder inList(Finder child) =>
-    find.descendant(of: find.byType(ProductListPage), matching: child);
-
-/// Pumps until the tree stops changing, then waits briefly for pending async
-/// work (localization assets, repository queries) and pumps again, so
-/// assertions do not race against a real database read.
-Future<void> settle(WidgetTester tester) async {
-  const timeout = Duration(seconds: 30);
-  await tester.pumpAndSettle(
-    const Duration(milliseconds: 50),
-    EnginePhase.sendSemanticsUpdate,
-    timeout,
-  );
-  await Future<void>.delayed(const Duration(milliseconds: 150));
-  await tester.pumpAndSettle(
-    const Duration(milliseconds: 50),
-    EnginePhase.sendSemanticsUpdate,
-    timeout,
-  );
-}
-
-/// Opens the date picker for [label] and accepts the default (today) date.
-Future<void> pickToday(WidgetTester tester, String label) async {
-  // The tap lands on the field's floating label, which is not itself
-  // hit-testable; the enclosing InkWell still receives it.
-  await tester.tap(inForm(find.text(label)), warnIfMissed: false);
-  await settle(tester);
-
-  final confirm = find.widgetWithText(TextButton, 'OK');
-  expect(
-    confirm,
-    findsOneWidget,
-    reason: 'date picker did not open for $label',
-  );
-  await tester.tap(confirm);
-  await settle(tester);
-}
-
-/// Scrolls the form to its Save button and taps it.
-///
-/// The button sits below the fold and a `ListView` does not build it until it
-/// approaches the viewport, so it has to be scrolled into view first.
-Future<void> submitForm(WidgetTester tester) async {
-  final save = inForm(find.widgetWithText(FilledButton, 'Save'));
-  for (var i = 0; i < 6 && save.evaluate().isEmpty; i++) {
-    await tester.drag(inForm(find.byType(ListView)), const Offset(0, -300));
-    await settle(tester);
-  }
-  expect(save, findsOneWidget, reason: 'Save button was not reachable');
-
-  await tester.ensureVisible(save);
-  await settle(tester);
-  await tester.tap(save);
-  await settle(tester);
-}
+import 'helpers.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -123,9 +58,8 @@ void main() {
     );
     await settle(tester);
 
-    await pickToday(tester, 'Purchase date');
-    await pickToday(tester, 'Warranty start');
-    await pickToday(tester, 'Warranty end');
+    await pickToday(tester);
+    await chooseOneYearWarranty(tester);
 
     await submitForm(tester);
     // Back on the list with the new card.

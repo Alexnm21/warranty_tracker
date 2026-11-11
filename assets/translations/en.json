@@ -9,6 +9,16 @@
     "confirm": "Confirm",
     "edit": "Edit"
   },
+  "documents": {
+    "remove": {
+      "title": "Delete document",
+      "action": "Delete",
+      "message": "Delete \"{name}\"? This can't be undone."
+    },
+    "error": {
+      "delete": "Could not delete the document"
+    }
+  },
   "shell": {
     "home": "Home",
     "products": "Products",
@@ -92,8 +102,6 @@
         "pending": "Pending save",
         "open": "Open",
         "remove": {
-          "action": "Remove",
-          "title": "Remove document",
           "stagedMessage": "Remove \"{name}\"? The file will be discarded.",
           "savedMessage": "Remove \"{name}\" from this product? The change is applied when you save."
         },
@@ -105,8 +113,7 @@
           "permissionDenied": "Permission denied. Allow access in system settings and try again.",
           "open": "Could not open the document",
           "fileNotFound": "The document file could not be found",
-          "noApp": "No app is available to open this document",
-          "delete": "Could not delete the document"
+          "noApp": "No app is available to open this document"
         }
       },
       "duration": "Warranty Duration",

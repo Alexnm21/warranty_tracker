@@ -607,9 +607,11 @@ A roadmap phase is considered complete when:
 
 # 18. Current Priority
 
-The current priority is:
+Phase 0 (project foundation), Phase 1 (core product & warranty management) and
+Phase 2 (warranty documents) are complete and verified. The current priority is:
 
-> Complete Phase 0 and Phase 1 before implementing future-phase functionality.
+> Complete Phase 3 — Notifications & Reminders, then continue with the next
+> phase in the roadmap order.
 
 The initial goal is not to build the complete long-term product immediately.
 

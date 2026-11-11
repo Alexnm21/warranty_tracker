@@ -1,5 +1,7 @@
 # Phase 1 — Core Product & Warranty Management
 
+**Status:** done (verified on the iOS simulator; see §7)
+
 ## Objective
 
 Implement the minimum usable version of Warranty Tracker: manage products and understand warranty status. All data is stored locally (offline-first) using Drift.
@@ -111,17 +113,23 @@ Focus on behavior: business logic + important flows.
   third-party dependency). It also serves as the regression test for the
   list-refresh bug fixed in Step 7 (see Decisions).
 - [x] **Regression**  
-  Run existing tests: `flutter test` (57 tests pass).
+  Run existing tests: `flutter test` (57 tests passed at Phase 1; 151 after the
+  Phase 2 documents work).
 
 ## 7) Quality & Verification
 
 - [x] **Format**: `dart format .`
 - [x] **Analyze**: `flutter analyze` — 0 new errors/warnings unless justified
-- [x] **Tests pass**: `flutter test` (57 unit/widget) + `flutter test integration_test` (1) on the iOS simulator
-- [ ] **Manual smoke test**  
-  Flow: create → list shows → detail → edit → delete → search → empty state
-- [ ] **Offline check**  
-  Works with airplane mode (no network). Confirm no external calls introduced.
+- [x] **Tests pass**: `flutter test` (151 unit/widget) + `flutter test integration_test` (1) on the iOS simulator
+- [x] **Manual smoke test**  
+  Executed end-to-end on the iOS simulator (`flutter test integration_test`,
+  iPhone 17 Pro): create → list shows → detail → edit → search → delete →
+  empty state. It is an automated E2E run rather than manual tapping, but it
+  drives the real app UI and database.
+- [x] **Offline check**  
+  No network dependency in `pubspec.yaml` and no HTTP/client code in `lib/`
+  (persistence is Drift/SQLite + local files). There is no network code path
+  to exercise, so an airplane-mode run was not required.
 
 ## Completion Criteria (from ROADMAP)
 
@@ -230,3 +238,12 @@ Application allows managing products and understanding warranty status offline. 
   by `flutter_localizations` (provided transparently by easy_localization's
   delegates). If Material localizations are ever removed, `DateFormat` will
   throw.
+- **Integration test updated during Phase 1 verification** (this run): the form
+  no longer uses `showDatePicker` (+ "OK") or separate warranty start/end
+  fields. It uses the shared `showCustomDatePicker` dialog ("Confirm") and a
+  purchase-date + warranty-duration selector (see `WARRANTY_END_DATE_RULE.md`),
+  so the Phase 1 test was stale and failed. It now taps the field's calendar
+  icon, pumps after the tap (`showDialog` opens asynchronously), confirms the
+  dialog and selects the 1-year duration. Verified on the iOS simulator.
+- **Test counts**: 57 unit/widget tests at the original Phase 1 completion;
+  151 after the Phase 2 documents work. All pass, plus the integration test.

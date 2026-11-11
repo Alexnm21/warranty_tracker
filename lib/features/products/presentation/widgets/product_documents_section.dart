@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../documents/domain/entities/warranty_document.dart';
+import 'confirm_document_removal.dart';
 import 'warranty_document_tile.dart';
 
 /// Document actions and attachment list shown in the product form.
@@ -133,26 +134,13 @@ class ProductDocumentsSection extends StatelessWidget {
         ? 'products.form.documents.remove.savedMessage'
         : 'products.form.documents.remove.stagedMessage';
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text('products.form.documents.remove.title'.tr()),
-        content: Text(messageKey.tr(namedArgs: {'name': document.fileName})),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text('common.cancel'.tr()),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: Text('common.delete'.tr()),
-          ),
-        ],
-      ),
+    final confirmed = await confirmDocumentRemoval(
+      context,
+      fileName: document.fileName,
+      messageKey: messageKey,
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       await onRemove(document);
     }
   }

@@ -115,6 +115,27 @@ void main() {
     expect(await File(saved.filePath).exists(), isFalse);
   });
 
+  test('delete completes when the stored file cannot be removed', () async {
+    final staged = await _stageFile(
+      storage,
+      tempDirectory,
+      'receipt.pdf',
+      'content',
+    );
+    final saved = await repository.add(
+      productId,
+      _document(staged.path, fileName: 'receipt.pdf'),
+    );
+    final failingRepository = DocumentRepositoryImpl(
+      documentDao,
+      _FailingDeleteStorage(),
+    );
+
+    await failingRepository.delete(saved);
+
+    expect(await documentDao.getByProduct(productId), isEmpty);
+  });
+
   test('delete rejects documents that were never persisted', () async {
     final staged = await _stageFile(
       storage,
@@ -200,4 +221,12 @@ WarrantyDocument _document(String filePath, {required String fileName}) {
     sizeBytes: 7,
     source: DocumentSource.file,
   );
+}
+
+/// Storage whose file deletion always fails, to test the best-effort cleanup.
+class _FailingDeleteStorage extends DocumentFileStorage {
+  @override
+  Future<void> deleteFile(String absolutePath) async {
+    throw const FileSystemException('cannot delete');
+  }
 }

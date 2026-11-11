@@ -125,6 +125,55 @@ void main() {
     expect(cubit.state.documentError, isNull);
   });
 
+  test('deleteDocument removes the document from the state', () async {
+    final document = _document();
+    final documentRepository = FakeDocumentRepository([document]);
+    final cubit = _cubit(
+      products: [const Product(id: 1, name: 'Laptop')],
+      documentRepository: documentRepository,
+    );
+    await cubit.load();
+
+    await cubit.deleteDocument(document);
+
+    expect(cubit.state.documents, isEmpty);
+    expect(cubit.state.documentError, isNull);
+    expect(documentRepository.documents, isEmpty);
+  });
+
+  test('deleteDocument maps a failure to a localization key', () async {
+    final document = _document();
+    final documentRepository = FakeDocumentRepository([document])
+      ..throwOnDelete = true;
+    final cubit = _cubit(
+      products: [const Product(id: 1, name: 'Laptop')],
+      documentRepository: documentRepository,
+    );
+    await cubit.load();
+
+    await cubit.deleteDocument(document);
+
+    expect(cubit.state.documents, [document]);
+    expect(cubit.state.documentError, 'documents.error.delete');
+  });
+
+  test('deleteDocument ignores documents that were never persisted', () async {
+    final documentRepository = FakeDocumentRepository()..throwOnDelete = true;
+    final cubit = _cubit(documentRepository: documentRepository);
+
+    await cubit.deleteDocument(
+      const WarrantyDocument(
+        fileName: 'staged.pdf',
+        filePath: '/staging/staged.pdf',
+        mimeType: 'application/pdf',
+        sizeBytes: 5,
+        source: DocumentSource.file,
+      ),
+    );
+
+    expect(cubit.state.documentError, isNull);
+  });
+
   test('delete returns true and removes the product', () async {
     final repository = FakeProductRepository([
       const Product(id: 1, name: 'Laptop'),

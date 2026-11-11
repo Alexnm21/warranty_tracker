@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import '../../domain/entities/warranty_document.dart';
@@ -77,7 +78,19 @@ class DocumentRepositoryImpl implements DocumentRepository {
     }
 
     await _dao.deleteById(id);
-    await _storage.deleteFile(document.filePath);
+
+    try {
+      await _storage.deleteFile(document.filePath);
+    } on Exception catch (error) {
+      // The metadata is already gone, so the document is deleted from the
+      // user's point of view. A failed file removal only leaves an orphan
+      // file behind, which must not surface as a failed deletion.
+      log(
+        'Could not delete the file of document $id',
+        name: 'DocumentRepositoryImpl',
+        error: error,
+      );
+    }
   }
 
   @override

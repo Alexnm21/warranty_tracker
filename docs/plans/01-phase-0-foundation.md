@@ -9,15 +9,15 @@ DI, database, localization) before implementing product functionality.
 
 **Completion criteria (from ROADMAP §5):**
 
-- [ ] Application starts successfully with the new structure
-- [ ] Architecture is established
-- [ ] Navigation works
-- [ ] Dependency injection works
-- [ ] Local database can be initialized
-- [ ] Localization works
-- [ ] Theme follows `DESIGN.md`
-- [ ] Tests can be executed successfully
-- [ ] Project follows `AGENTS.md`
+- [x] Application starts successfully with the new structure
+- [x] Architecture is established
+- [x] Navigation works
+- [x] Dependency injection works
+- [x] Local database can be initialized
+- [x] Localization works
+- [x] Theme follows `DESIGN.md`
+- [x] Tests can be executed successfully
+- [x] Project follows `AGENTS.md`
 
 ---
 

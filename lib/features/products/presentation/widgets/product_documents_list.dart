@@ -5,11 +5,12 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../documents/domain/entities/warranty_document.dart';
+import 'confirm_document_removal.dart';
 import 'warranty_document_tile.dart';
 
-/// Read-only list of a product's persisted documents.
+/// List of a product's persisted documents with open and delete actions.
 ///
-/// Handles the loading, empty, load-error and open-error states used by the
+/// Handles the loading, empty, load-error and action-error states used by the
 /// product detail screen.
 class ProductDocumentsList extends StatelessWidget {
   const ProductDocumentsList({
@@ -17,8 +18,9 @@ class ProductDocumentsList extends StatelessWidget {
     required this.documents,
     required this.isLoading,
     required this.loadError,
-    required this.openError,
+    required this.documentError,
     required this.onOpen,
+    required this.onDelete,
     required this.onRetry,
   });
 
@@ -28,10 +30,11 @@ class ProductDocumentsList extends StatelessWidget {
   /// Load error as a localization key.
   final String? loadError;
 
-  /// Open error as a localization key.
-  final String? openError;
+  /// Error from a document action (open or delete) as a localization key.
+  final String? documentError;
 
   final Future<void> Function(WarrantyDocument document) onOpen;
+  final Future<void> Function(WarrantyDocument document) onDelete;
   final Future<void> Function() onRetry;
 
   @override
@@ -54,8 +57,8 @@ class ProductDocumentsList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (openError != null) ...[
-          _InlineError(messageKey: openError!),
+        if (documentError != null) ...[
+          _InlineError(messageKey: documentError!),
           const SizedBox(height: AppSpacing.md),
         ],
         for (var index = 0; index < documents.length; index++) ...[
@@ -63,12 +66,28 @@ class ProductDocumentsList extends StatelessWidget {
             document: documents[index],
             showPending: false,
             onOpen: () => onOpen(documents[index]),
+            onRemove: () => _confirmDelete(context, documents[index]),
           ),
           if (index < documents.length - 1)
             const SizedBox(height: AppSpacing.sm),
         ],
       ],
     );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WarrantyDocument document,
+  ) async {
+    final confirmed = await confirmDocumentRemoval(
+      context,
+      fileName: document.fileName,
+      messageKey: 'documents.remove.message',
+    );
+
+    if (confirmed && context.mounted) {
+      await onDelete(document);
+    }
   }
 }
 

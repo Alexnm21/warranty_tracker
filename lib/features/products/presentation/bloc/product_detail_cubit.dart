@@ -125,6 +125,37 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
     }
   }
 
+  /// Deletes a persisted [document] and removes it from the state.
+  ///
+  /// The file and its metadata are removed together. Documents still staged
+  /// in a form have no id and are ignored.
+  Future<void> deleteDocument(WarrantyDocument document) async {
+    if (isClosed || document.id == null) {
+      return;
+    }
+
+    emit(state.copyWith(clearDocumentError: true));
+
+    try {
+      await _documentRepository.delete(document);
+      if (isClosed) {
+        return;
+      }
+
+      emit(
+        state.copyWith(
+          documents: state.documents
+              .where((item) => item.id != document.id)
+              .toList(),
+        ),
+      );
+    } on Exception {
+      if (!isClosed) {
+        emit(state.copyWith(documentError: 'documents.error.delete'));
+      }
+    }
+  }
+
   /// Deletes the product.
   ///
   /// Returns `true` on success, or `false` if the operation failed so the UI

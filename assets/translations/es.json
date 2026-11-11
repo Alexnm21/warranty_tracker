@@ -9,6 +9,16 @@
     "confirm": "Confirmar",
     "edit": "Editar"
   },
+  "documents": {
+    "remove": {
+      "title": "Eliminar documento",
+      "action": "Eliminar",
+      "message": "¿Eliminar \"{name}\"? Esta acción no se puede deshacer."
+    },
+    "error": {
+      "delete": "No se pudo eliminar el documento"
+    }
+  },
   "shell": {
     "home": "Inicio",
     "products": "Productos",
@@ -92,8 +102,6 @@
         "pending": "Pendiente de guardar",
         "open": "Abrir",
         "remove": {
-          "action": "Eliminar",
-          "title": "Eliminar documento",
           "stagedMessage": "¿Eliminar \"{name}\"? El archivo se descartará.",
           "savedMessage": "¿Eliminar \"{name}\" de este producto? El cambio se aplicará al guardar."
         },
@@ -105,8 +113,7 @@
           "permissionDenied": "Permiso denegado. Permite el acceso en los ajustes del sistema e inténtalo de nuevo.",
           "open": "No se pudo abrir el documento",
           "fileNotFound": "No se encontró el archivo del documento",
-          "noApp": "No hay ninguna aplicación disponible para abrir este documento",
-          "delete": "No se pudo eliminar el documento"
+          "noApp": "No hay ninguna aplicación disponible para abrir este documento"
         }
       },
       "duration": "Duration de Garantía",

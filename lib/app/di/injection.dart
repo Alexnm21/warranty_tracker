@@ -23,10 +23,6 @@ void setupInjection({AppDatabase? database}) {
     () => ProductDao(getIt<AppDatabase>()),
   );
 
-  getIt.registerLazySingleton<ProductRepository>(
-    () => ProductRepositoryImpl(getIt<ProductDao>()),
-  );
-
   getIt.registerLazySingleton<DocumentDao>(
     () => DocumentDao(getIt<AppDatabase>()),
   );
@@ -36,6 +32,11 @@ void setupInjection({AppDatabase? database}) {
       getIt<DocumentDao>(),
       getIt<DocumentFileStorage>(),
     ),
+  );
+
+  getIt.registerLazySingleton<ProductRepository>(
+    () =>
+        ProductRepositoryImpl(getIt<ProductDao>(), getIt<DocumentRepository>()),
   );
   getIt.registerLazySingleton<DocumentImporter>(
     () => DocumentImporter(storage: getIt<DocumentFileStorage>()),

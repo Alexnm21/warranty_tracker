@@ -166,6 +166,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
           documentsStatus: state.documentsStatus,
           documentError: state.documentError,
           onOpenDocument: context.read<ProductDetailCubit>().openDocument,
+          onDeleteDocument: context.read<ProductDetailCubit>().deleteDocument,
           onRetryDocuments: context.read<ProductDetailCubit>().loadDocuments,
         );
     }
@@ -179,6 +180,7 @@ class _ProductDetails extends StatelessWidget {
     required this.documentsStatus,
     required this.documentError,
     required this.onOpenDocument,
+    required this.onDeleteDocument,
     required this.onRetryDocuments,
   });
 
@@ -187,6 +189,7 @@ class _ProductDetails extends StatelessWidget {
   final ProductDetailDocumentsStatus documentsStatus;
   final String? documentError;
   final Future<void> Function(WarrantyDocument document) onOpenDocument;
+  final Future<void> Function(WarrantyDocument document) onDeleteDocument;
   final Future<void> Function() onRetryDocuments;
 
   @override
@@ -236,8 +239,9 @@ class _ProductDetails extends StatelessWidget {
               loadError: documentsStatus == ProductDetailDocumentsStatus.error
                   ? 'products.detail.documents.loadError'
                   : null,
-              openError: documentError,
+              documentError: documentError,
               onOpen: onOpenDocument,
+              onDelete: onDeleteDocument,
               onRetry: onRetryDocuments,
             ),
           ],
