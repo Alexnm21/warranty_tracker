@@ -131,5 +131,17 @@
         "expired": "Expired"
       }
     }
+  },
+  "reminders": {
+    "notification": {
+      "approaching": {
+        "title": "Warranty for {productName} ends soon",
+        "body": "The warranty for {productName} ends in {days} days."
+      },
+      "expiration": {
+        "title": "Warranty for {productName} expires today",
+        "body": "The warranty for {productName} ends today."
+      }
+    }
   }
 }

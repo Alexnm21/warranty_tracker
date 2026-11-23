@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** in progress (step 2 of 6 complete)
+**Status:** in progress (step 3 of 6 complete)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -116,10 +116,10 @@ Any change requires explicit approval before implementation.
 
 ## 4) Data Layer — Settings, Gateway and Scheduler
 
-- [ ] **Settings repository** — `reminder_settings_repository_impl.dart` using
+- [x] **Settings repository** — `reminder_settings_repository_impl.dart` using
       `SharedPreferences` keys `reminders.enabled` and `reminders.lead_days`.
       It is the only place that knows the storage format.
-- [ ] **Notification gateway** — `warranty_notification_gateway.dart`
+- [x] **Notification gateway** — `warranty_notification_gateway.dart`
       wrapping `FlutterLocalNotificationsPlugin`:
   - `initialize()`: plugin init plus timezone bootstrap (device timezone);
   - `requestPermission()` / `permissionStatus()` for Android 13+ and iOS;
@@ -128,23 +128,25 @@ Any change requires explicit approval before implementation.
   - `openSystemNotificationSettings()` for the denied-permission case;
   - exposes injectable seams (plugin instance / clock / timezone) so tests do
     not need native platform mocks, following the Phase 2 pattern.
-- [ ] **Scheduler** — `warranty_reminder_scheduler.dart` implements
+- [x] **Scheduler** — `warranty_reminder_scheduler.dart` implements
       `ReminderScheduler.sync()`:
   1. load settings;
   2. always cancel the app's warranty reminders first;
   3. if disabled or permission is not granted, stop (no scheduling);
-  4. read the current products through `ProductDao`;
+  4. read the current products through the products' `ProductRepository`
+     contract (which uses `ProductDao` internally);
   5. build the plan with `WarrantyReminderPlanner`;
   6. schedule each reminder with localized title/body.
   Scheduling failures are caught and logged: a product create/update/delete
   must never fail because of notifications.
-- [ ] **Notification messages** — add `reminders.notification.*` keys to
+- [x] **Notification messages** — add `reminders.notification.*` keys to
       `en.json` and `es.json` (one title/body per `ReminderType`, with the
       product name and days as parameters). Text is composed when scheduling,
       so a language change is applied on the next sync.
-- [ ] **DI** — register `ReminderSettingsRepository`,
-      `WarrantyNotificationGateway`, `WarrantyReminderScheduler` and the
-      settings cubit in `lib/app/di/injection.dart`.
+- [x] **DI** — register `ReminderSettingsRepository`,
+      `WarrantyNotificationGateway` and `WarrantyReminderScheduler` in
+      `lib/app/di/injection.dart`. The settings cubit is registered in step 5,
+      when that class exists.
 
 ---
 
@@ -227,11 +229,11 @@ Any change requires explicit approval before implementation.
 
 ## 8) Testing
 
-- [ ] Planner unit tests (see §3), including the iOS 64-limit cap.
-- [ ] `ReminderSettingsRepositoryImpl` tests with
+- [x] Planner unit tests (see §3), including the iOS 64-limit cap.
+- [x] `ReminderSettingsRepositoryImpl` tests with
       `SharedPreferences.setMockInitialValues`, covering defaults, unknown
       values and round-trip persistence.
-- [ ] Scheduler tests with fakes for settings, products and gateway:
+- [x] Scheduler tests with fakes for settings, products and gateway:
       disabled → cancel only; permission denied → cancel only; enabled →
       deterministic schedule list; gateway failure → swallowed and logged.
 - [ ] `ProductRepositoryImpl` tests updated: sync runs after create/update/

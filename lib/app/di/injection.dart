@@ -13,6 +13,12 @@ import '../../features/products/domain/repositories/product_repository.dart';
 import '../../features/products/presentation/bloc/product_detail_cubit.dart';
 import '../../features/products/presentation/bloc/product_form_cubit.dart';
 import '../../features/products/presentation/bloc/product_list_cubit.dart';
+import '../../features/reminders/data/repositories/reminder_settings_repository_impl.dart';
+import '../../features/reminders/data/services/flutter_warranty_notification_gateway.dart';
+import '../../features/reminders/data/services/warranty_notification_gateway.dart';
+import '../../features/reminders/data/services/warranty_reminder_scheduler.dart';
+import '../../features/reminders/domain/repositories/reminder_settings_repository.dart';
+import '../../features/reminders/domain/services/reminder_scheduler.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -42,6 +48,20 @@ void setupInjection({AppDatabase? database}) {
     () => DocumentImporter(storage: getIt<DocumentFileStorage>()),
   );
   getIt.registerLazySingleton<DocumentOpener>(() => DocumentOpener());
+
+  getIt.registerLazySingleton<ReminderSettingsRepository>(
+    () => ReminderSettingsRepositoryImpl(),
+  );
+  getIt.registerLazySingleton<WarrantyNotificationGateway>(
+    () => FlutterWarrantyNotificationGateway(),
+  );
+  getIt.registerLazySingleton<ReminderScheduler>(
+    () => WarrantyReminderScheduler(
+      settingsRepository: getIt<ReminderSettingsRepository>(),
+      gateway: getIt<WarrantyNotificationGateway>(),
+      productRepository: getIt<ProductRepository>(),
+    ),
+  );
 
   getIt.registerFactory<ProductListCubit>(
     () => ProductListCubit(getIt<ProductRepository>()),
