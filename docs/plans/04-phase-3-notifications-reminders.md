@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** planned
+**Status:** in progress (step 1 of 6 complete)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -20,8 +20,8 @@ user control and no duplicates or stale reminders.
 
 - [x] Phase 1 (products, warranty status) implemented and tested
 - [x] Phase 2 (documents) implemented, tested and merged
-- [ ] Dependencies and scope decisions below approved
-- [ ] Confirm supported platforms for this phase: Android and iOS
+- [x] Dependencies and scope decisions below approved
+- [x] Confirm supported platforms for this phase: Android and iOS
       (the project currently ships only those two targets)
 
 ---
@@ -31,13 +31,13 @@ user control and no duplicates or stale reminders.
 Every dependency must be justified (AGENTS.md §18). None of these is
 replaceable with Flutter/Dart built-ins.
 
-- [ ] `flutter_local_notifications` **^22.3.3** — schedules local
+- [x] `flutter_local_notifications` **^22.3.3** — schedules local
       notifications on Android/iOS, including the platform permission flows.
       Pinned to 22.x on purpose: 23.x requires Flutter >= 3.44 and Dart
       ^3.12, while the project uses Flutter 3.41.7 / Dart 3.11.5.
-- [ ] `timezone` **^0.11.2** — required by `zonedSchedule` to represent the
+- [x] `timezone` **^0.11.2** — required by `zonedSchedule` to represent the
       device's local calendar correctly (DST included).
-- [ ] `flutter_timezone` **^5.1.1** — resolves the device timezone name so
+- [x] `flutter_timezone` **^5.1.1** — resolves the device timezone name so
       `timezone`'s `tz.local` is the real local zone instead of UTC.
 - [x] `shared_preferences` — already in `pubspec.yaml` (currently unused).
       Reminder settings are simple key/value data, so no new dependency and
@@ -195,29 +195,31 @@ Any change requires explicit approval before implementation.
 
 ### Android
 
-- [ ] `android/app/build.gradle.kts`: enable core library desugaring
+- [x] `android/app/build.gradle.kts`: enable core library desugaring
       (`isCoreLibraryDesugaringEnabled = true`), `multiDexEnabled = true`,
       and add `coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")`.
       The project already uses AGP 8.11.1, the minimum required by the plugin.
-- [ ] Ensure `compileSdk` is >= 35 (Flutter 3.41 already resolves a supported
-      value; verify after adding the plugin).
-- [ ] `AndroidManifest.xml`: `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`,
+- [x] Ensure `compileSdk` is >= 35 (Flutter 3.41 already resolves a supported
+      value; verify after adding the plugin). Verified: 36.
+- [x] `AndroidManifest.xml`: `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`,
       `ScheduledNotificationReceiver`, and
       `ScheduledNotificationBootReceiver` with the boot/replace intent
       filters. No exact-alarm permission (inexact scheduling).
 - [ ] Add a monochrome notification icon drawable and pass it to
       `AndroidInitializationSettings` (avoid using the launcher icon).
+      Drawable added; wiring up `AndroidInitializationSettings` is part of
+      step 3 (data layer).
 - [ ] Verify notification channels are created with the desired importance;
       changing sound/importance later requires a new channel id.
 
 ### iOS
 
-- [ ] `ios/Runner/AppDelegate.swift`: set
+- [x] `ios/Runner/AppDelegate.swift`: set
       `UNUserNotificationCenter.current().delegate` (the project uses the
       UIScene lifecycle via `FlutterImplicitEngineDelegate`, so confirm the
       correct hook) so foreground notifications and taps are delivered.
-- [ ] No `Info.plist` entry is required for local notifications.
-- [ ] Deployment target stays at iOS 13, which the plugin supports.
+- [x] No `Info.plist` entry is required for local notifications.
+- [x] Deployment target stays at iOS 13, which the plugin supports.
 
 ---
 
@@ -253,9 +255,9 @@ Any change requires explicit approval before implementation.
 
 ## 9) Quality & Verification
 
-- [ ] `dart format .`
-- [ ] `flutter analyze` — 0 issues
-- [ ] `flutter test` — all unit/widget tests pass
+- [x] `dart format .`
+- [x] `flutter analyze` — 0 issues
+- [x] `flutter test` — all unit/widget tests pass
 - [ ] `flutter test integration_test` on the iOS simulator
 - [ ] Android smoke test (permission, scheduling, reboot)
 - [ ] iOS smoke test (permission, foreground/background delivery)
