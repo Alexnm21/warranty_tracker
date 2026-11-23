@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** in progress (step 1 of 6 complete)
+**Status:** in progress (step 2 of 6 complete)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -82,18 +82,18 @@ Any change requires explicit approval before implementation.
 
 ## 3) Domain Layer — Reminders
 
-- [ ] **Entity: `ReminderSettings`**
+- [x] **Entity: `ReminderSettings`**
       `enabled` (bool), `leadDays` (int). Defaults: `false`, `30`.
       Validation: `leadDays` must be one of the supported options; unknown
       stored values fall back to the default.
-- [ ] **Enum: `ReminderType`** — `approaching`, `expiration`.
-- [ ] **Entity: `WarrantyReminder`** — `notificationId`, `productId`,
+- [x] **Enum: `ReminderType`** — `approaching`, `expiration`.
+- [x] **Entity: `WarrantyReminder`** — `notificationId`, `productId`,
       `productName`, `scheduledAt`, `type`.
-- [ ] **Repository contract: `ReminderSettingsRepository`** —
+- [x] **Repository contract: `ReminderSettingsRepository`** —
       `Future<ReminderSettings> load()`, `Future<void> save(ReminderSettings)`.
-- [ ] **Service contract: `ReminderScheduler`** —
+- [x] **Service contract: `ReminderScheduler`** —
       `Future<void> sync()`; implemented in the data layer.
-- [ ] **Planner: `WarrantyReminderPlanner`** (pure Dart, no Flutter)
+- [x] **Planner: `WarrantyReminderPlanner`** (pure Dart, no Flutter)
       `List<WarrantyReminder> plan({products, settings, now})`:
   - skip when `settings.enabled` is false;
   - skip products with a null `warrantyEndDate`;
@@ -106,9 +106,11 @@ Any change requires explicit approval before implementation.
   - cap the plan to the **soonest 60 events** so the iOS limit of 64 pending
     notifications is never hit (leave a small buffer for other app
     notifications).
-- [ ] Unit tests for the planner: approaching + expiration, end date today,
+- [x] Unit tests for the planner: approaching + expiration, end date today,
       past end date, null end date, disabled settings, boundaries at 09:00,
       deterministic IDs, duplicate-free output and the 60-event cap.
+- [x] Unit tests for `ReminderSettings` defaults, supported values and
+      fallback for unknown stored lead times.
 
 ---
 
