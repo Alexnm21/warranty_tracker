@@ -163,3 +163,25 @@ is derived from the product dates.
 * Deleting a product cascades to its document metadata. Stored files are
   removed by the documents repository as part of product deletion.
 
+---
+
+# 4. Reminder Settings
+
+Reminder preferences are **device-local settings**. They are not part of the
+product data model, are not stored in SQLite, and are not synchronized with
+product or document data. The database `schemaVersion` stays at 3.
+
+| Setting    | Type   | Storage key           | Default | Allowed values   |
+| ---------- | ------ | --------------------- | ------- | ---------------- |
+| `enabled`  | `bool` | `reminders.enabled`   | `false` | `true` / `false` |
+| `leadDays` | `int`  | `reminders.lead_days` | `30`    | 1, 3, 7, 14, 30, 60 |
+
+* `ReminderSettingsRepository` is the only place that knows these storage keys.
+* Unknown stored values fall back to the defaults, so a stale or edited
+  preference file cannot prevent the app from starting.
+* Notification permission is an OS-level state, not an app preference. It is
+  read from the notification gateway and is never persisted locally.
+* Pending notifications are derived data and are not persisted. They are
+  recomputed from the current products and settings on startup, after product
+  mutations, and after settings changes.
+

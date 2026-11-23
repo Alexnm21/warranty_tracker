@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** in progress (step 5 of 6 complete)
+**Status:** implementation complete — manual device verification pending
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -246,9 +246,12 @@ Any change requires explicit approval before implementation.
       loading and error states, localized strings.
 - [ ] Integration test (best effort): enable reminders on the simulator, add
       a product whose end date falls inside the lead window, and assert that
-      the expected pending notification exists. If simulator behavior proves
-      unreliable, keep the coverage at the scheduler/unit level and document
-      why.
+      the expected pending notification exists. **Not run:** this environment
+      has no iOS simulator, Android emulator or configured desktop integration
+      target (`flutter devices` reports only Chrome and macOS, and the project
+      has no macOS desktop runner). Coverage is kept at the
+      scheduler/repository/cubit/widget level, where the full flow is tested
+      with fakes.
 - [ ] Manual device verification checklist:
   - permission prompt appears only when enabling;
   - a reminder scheduled one minute ahead is delivered;
@@ -267,25 +270,27 @@ Any change requires explicit approval before implementation.
 - [ ] `flutter test integration_test` on the iOS simulator
 - [ ] Android smoke test (permission, scheduling, reboot)
 - [ ] iOS smoke test (permission, foreground/background delivery)
-- [ ] No database migration expected: settings live in `SharedPreferences`,
-      so `schemaVersion` stays at 3. Verify upgrading an existing install with
-      data still works.
+- [x] No database migration expected: settings live in `SharedPreferences`,
+      so `schemaVersion` stays at 3 (verified in `app_database.dart`).
+      Upgrading an existing install with data still needs a manual check.
 
 ---
 
 ## 10) Documentation
 
-- [ ] `DATA_MODEL.md`: add a short "Reminder Settings" section stating that
+- [x] `DATA_MODEL.md`: add a short "Reminder Settings" section stating that
       reminder preferences are device-local settings persisted in
       `SharedPreferences` and are **not** part of the product data model or
       the database schema.
-- [ ] `ARCHITECTURE.md`: add `features/reminders/` (domain/data) and describe
-      the notification integration (resync from current products, scheduler
-      as a data-layer service).
-- [ ] `DESIGN.md`: document the settings page if it introduces new patterns.
-- [ ] `ROADMAP.md`: mark Phase 3 as done and move the current priority to
-      Phase 4 only when the completion criteria are met.
-- [ ] `docs/plans/README.md`: keep the Phase 3 status current.
+- [x] `ARCHITECTURE.md`: add `features/reminders/` (domain/data/presentation)
+      and describe the notification integration (resync from current products,
+      scheduler as a data-layer service).
+- [x] `DESIGN.md`: document the settings page if it introduces new patterns.
+      No new pattern was introduced, so no change was needed.
+- [x] `ROADMAP.md`: record the Phase 3 implementation status and keep the
+      priority on device verification before Phase 4. Hardware verification is
+      still pending, so the phase is not marked fully complete.
+- [x] `docs/plans/README.md`: keep the Phase 3 status current.
 
 ---
 
@@ -304,8 +309,9 @@ Any change requires explicit approval before implementation.
    `ProductRepositoryImpl`; repository tests updated.
 5. **Presentation** — `ReminderSettingsCubit`, real `SettingsView`, reminder
    widgets, translations and widget/cubit tests.
-6. **Verification** — integration test, iOS/Android smoke tests, docs updates
-   and plan checkboxes.
+6. **Verification** — docs updates and plan checkboxes done. Device/integration
+   verification is pending because no simulator, emulator or desktop
+   integration target is available in this environment.
 
 ---
 
