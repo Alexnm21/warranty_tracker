@@ -21,7 +21,7 @@ development phase, so any future session can resume without re-planning.
 | [Phase 0 — Project Foundation](01-phase-0-foundation.md) | done |
 | [Phase 1 — Core Product & Warranty Management](02-phase-1-core-product-warranty-management.md) | done |
 | [Phase 2 — Warranty Documents](03-phase-2-warranty-documents.md) | done |
-| [Phase 3 — Notifications & Reminders](04-phase-3-notifications-reminders.md) | planned |
+| [Phase 3 — Notifications & Reminders](04-phase-3-notifications-reminders.md) | in progress |
 
 ## Rules
 

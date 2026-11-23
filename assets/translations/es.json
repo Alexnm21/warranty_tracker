@@ -7,7 +7,8 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "confirm": "Confirmar",
-    "edit": "Editar"
+    "edit": "Editar",
+    "retry": "Reintentar"
   },
   "documents": {
     "remove": {
@@ -141,6 +142,23 @@
       "expiration": {
         "title": "La garantía de {productName} vence hoy",
         "body": "La garantía de {productName} termina hoy."
+      }
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "reminders": {
+      "title": "Recordatorios de garantía",
+      "description": "Recibe una notificación antes de que termine una garantía y en su fecha de vencimiento.",
+      "enable": "Activar recordatorios",
+      "leadTime": "Avisar antes (días)",
+      "saving": "Guardando…",
+      "permissionDenied": "Las notificaciones están bloqueadas. Actívalas en los ajustes del sistema para recibir recordatorios.",
+      "openSystemSettings": "Abrir ajustes del sistema",
+      "error": {
+        "load": "No se pudieron cargar los ajustes de recordatorios",
+        "save": "No se pudieron guardar los ajustes de recordatorios",
+        "permission": "No se pudo comprobar el permiso de notificaciones"
       }
     }
   }

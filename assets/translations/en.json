@@ -7,7 +7,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "confirm": "Confirm",
-    "edit": "Edit"
+    "edit": "Edit",
+    "retry": "Retry"
   },
   "documents": {
     "remove": {
@@ -141,6 +142,23 @@
       "expiration": {
         "title": "Warranty for {productName} expires today",
         "body": "The warranty for {productName} ends today."
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "reminders": {
+      "title": "Warranty reminders",
+      "description": "Get a notification before a warranty ends and on its expiration date.",
+      "enable": "Enable reminders",
+      "leadTime": "Notify before (days)",
+      "saving": "Saving…",
+      "permissionDenied": "Notifications are blocked. Enable them in system settings to receive reminders.",
+      "openSystemSettings": "Open system settings",
+      "error": {
+        "load": "Could not load reminder settings",
+        "save": "Could not save reminder settings",
+        "permission": "Could not check notification permission"
       }
     }
   }

@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** in progress (step 4 of 6 complete)
+**Status:** in progress (step 5 of 6 complete)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -159,7 +159,7 @@ Any change requires explicit approval before implementation.
       `ReminderScheduler.sync()` after `create`, `update` and `delete`.
       Failures are logged, never propagated (same rule as stored-file cleanup
       in Phase 2).
-- [ ] **Settings changes**: saving the settings triggers a sync, so enabling,
+- [x] **Settings changes**: saving the settings triggers a sync, so enabling,
       disabling or changing the lead time takes effect immediately.
 - [x] **Deleted products / changed dates**: covered by the resync derived from
       the database; the planner only sees current rows.
@@ -173,25 +173,27 @@ Any change requires explicit approval before implementation.
 
 ## 6) Presentation — Settings
 
-- [ ] Replace the placeholder `SettingsView` with a real settings page:
+- [x] Replace the placeholder `SettingsView` with a real settings page:
   - **Reminders section** with an enable/disable switch;
   - lead-time selector (1/3/7/14/30/60 days), reused via the existing
     `OptionSelectorRow` where it fits;
   - short helper text explaining what will be notified;
   - permission-denied state with an "Open system settings" action;
   - loading and error states for settings persistence.
-- [ ] **Cubit: `ReminderSettingsCubit`** with immutable states
+- [x] **Cubit: `ReminderSettingsCubit`** with immutable states
       (loading, ready, saving, permission-blocked, error):
   - load settings + permission status on creation;
   - enabling requests permission; store `enabled = true` only when granted;
   - disabling saves and cancels scheduled reminders;
   - changing the lead time saving + syncing;
   - permission check on screen re-entry (AGENTS.md §7 refresh rule).
-- [ ] **Localization** — `settings.reminders.*` keys in `en.json` and
+- [x] **Localization** — `settings.reminders.*` keys in `en.json` and
       `es.json`. No hard-coded user-facing strings.
-- [ ] **Design** — use existing tokens (`AppColors`, `AppSpacing`,
+- [x] **Design** — use existing tokens (`AppColors`, `AppSpacing`,
       `AppTextStyles`) and Material 3 components. If the settings page
       introduces a new visual pattern, document it in `DESIGN.md` first.
+      No new pattern was needed: the themed `Card`, `SwitchListTile` and
+      existing `OptionSelectorRow` were reused.
 
 ---
 
@@ -209,12 +211,12 @@ Any change requires explicit approval before implementation.
       `ScheduledNotificationReceiver`, and
       `ScheduledNotificationBootReceiver` with the boot/replace intent
       filters. No exact-alarm permission (inexact scheduling).
-- [ ] Add a monochrome notification icon drawable and pass it to
+- [x] Add a monochrome notification icon drawable and pass it to
       `AndroidInitializationSettings` (avoid using the launcher icon).
-      Drawable added; wiring up `AndroidInitializationSettings` is part of
-      step 3 (data layer).
-- [ ] Verify notification channels are created with the desired importance;
-      changing sound/importance later requires a new channel id.
+      Drawable added in step 1 and wired in step 3.
+- [x] Verify notification channels are created with the desired importance;
+      changing sound/importance later requires a new channel id. Step 3 uses
+      `warranty_reminders` with `Importance.high`.
 
 ### iOS
 
@@ -238,9 +240,9 @@ Any change requires explicit approval before implementation.
       deterministic schedule list; gateway failure → swallowed and logged.
 - [x] `ProductRepositoryImpl` tests updated: sync runs after create/update/
       delete and a sync failure does not fail the operation.
-- [ ] `ReminderSettingsCubit` tests: load, toggle granted, toggle denied,
+- [x] `ReminderSettingsCubit` tests: load, toggle granted, toggle denied,
       lead-time change, save error, permission-blocked refresh.
-- [ ] Widget test for the settings page: switch, options, denied message,
+- [x] Widget test for the settings page: switch, options, denied message,
       loading and error states, localized strings.
 - [ ] Integration test (best effort): enable reminders on the simulator, add
       a product whose end date falls inside the lead window, and assert that

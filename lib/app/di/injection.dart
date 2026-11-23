@@ -19,6 +19,7 @@ import '../../features/reminders/data/services/warranty_notification_gateway.dar
 import '../../features/reminders/data/services/warranty_reminder_scheduler.dart';
 import '../../features/reminders/domain/repositories/reminder_settings_repository.dart';
 import '../../features/reminders/domain/services/reminder_scheduler.dart';
+import '../../features/reminders/presentation/bloc/reminder_settings_cubit.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -64,6 +65,14 @@ void setupInjection({AppDatabase? database}) {
       settingsRepository: getIt<ReminderSettingsRepository>(),
       gateway: getIt<WarrantyNotificationGateway>(),
       productRepository: getIt<ProductRepository>(),
+    ),
+  );
+
+  getIt.registerFactory<ReminderSettingsCubit>(
+    () => ReminderSettingsCubit(
+      settingsRepository: getIt<ReminderSettingsRepository>(),
+      gateway: getIt<WarrantyNotificationGateway>(),
+      scheduler: getIt<ReminderScheduler>(),
     ),
   );
 
