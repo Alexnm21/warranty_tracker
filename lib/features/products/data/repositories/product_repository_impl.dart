@@ -6,11 +6,18 @@ import '../../domain/repositories/product_repository.dart';
 import '../daos/product_dao.dart';
 import '../mappers/product_mapper.dart';
 
+typedef ReminderSyncCallback = Future<void> Function();
+
 class ProductRepositoryImpl implements ProductRepository {
-  ProductRepositoryImpl(this._dao, this._documents);
+  ProductRepositoryImpl(
+    this._dao,
+    this._documents, {
+    ReminderSyncCallback? reminderSync,
+  }) : _reminderSync = reminderSync;
 
   final ProductDao _dao;
   final DocumentRepository _documents;
+  final ReminderSyncCallback? _reminderSync;
 
   @override
   Future<List<Product>> getAll() async {
@@ -35,6 +42,7 @@ class ProductRepositoryImpl implements ProductRepository {
     final id = await _dao.insertProduct(
       ProductMapper.toInsertCompanion(prepared),
     );
+    await _syncReminders();
     return prepared.copyWith(id: id);
   }
 
@@ -42,6 +50,7 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Product> update(Product product) async {
     final updated = product.copyWith(updatedAt: DateTime.now());
     await _dao.updateProduct(ProductMapper.toRow(updated));
+    await _syncReminders();
     return updated;
   }
 
@@ -57,6 +66,24 @@ class ProductRepositoryImpl implements ProductRepository {
       // be cleaned up later.
       log(
         'Could not delete the stored documents of product $id',
+        name: 'ProductRepositoryImpl',
+        error: error,
+      );
+    }
+    await _syncReminders();
+  }
+
+  Future<void> _syncReminders() async {
+    if (_reminderSync == null) {
+      return;
+    }
+    try {
+      await _reminderSync();
+    } on Exception catch (error) {
+      // The product mutation is already committed; notification failures must
+      // not turn it into a user-visible error.
+      log(
+        'Could not reschedule warranty reminders',
         name: 'ProductRepositoryImpl',
         error: error,
       );

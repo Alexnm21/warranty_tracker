@@ -11,6 +11,7 @@ import 'package:warranty_tracker/features/documents/domain/entities/warranty_doc
 import 'package:warranty_tracker/features/documents/domain/repositories/document_repository.dart';
 import 'package:warranty_tracker/features/products/data/daos/product_dao.dart';
 import 'package:warranty_tracker/features/products/data/repositories/product_repository_impl.dart';
+import 'package:warranty_tracker/features/products/domain/entities/product.dart';
 
 void main() {
   late AppDatabase db;
@@ -72,6 +73,86 @@ void main() {
 
     expect(await productDao.getById(productId), isNull);
   });
+
+  test('resyncs reminders after create, update and delete', () async {
+    final sync = _ReminderSyncSpy();
+    final repository = _repositoryWithSync(
+      sync,
+      productDao,
+      documentDao,
+      storage,
+    );
+
+    await repository.create(_newProduct());
+    expect(sync.calls, 1);
+
+    await repository.update(_existingProduct(productId));
+    expect(sync.calls, 2);
+
+    await repository.delete(productId);
+    expect(sync.calls, 3);
+  });
+
+  test('delete completes when the reminder resync fails', () async {
+    final sync = _ReminderSyncSpy()..shouldThrow = true;
+    final repository = _repositoryWithSync(
+      sync,
+      productDao,
+      documentDao,
+      storage,
+    );
+
+    await expectLater(repository.delete(productId), completes);
+
+    expect(sync.calls, 1);
+    expect(await productDao.getById(productId), isNull);
+  });
+}
+
+ProductRepositoryImpl _repositoryWithSync(
+  _ReminderSyncSpy sync,
+  ProductDao productDao,
+  DocumentDao documentDao,
+  DocumentFileStorage storage,
+) {
+  return ProductRepositoryImpl(
+    productDao,
+    DocumentRepositoryImpl(documentDao, storage),
+    reminderSync: sync.call,
+  );
+}
+
+Product _newProduct() {
+  return Product(
+    name: 'Phone',
+    purchaseDate: DateTime(2025, 2, 1),
+    warrantyEndDate: DateTime(2026, 2, 1),
+    createdAt: DateTime(2025, 2, 1),
+    updatedAt: DateTime(2025, 2, 1),
+  );
+}
+
+Product _existingProduct(int productId) {
+  return Product(
+    id: productId,
+    name: 'Laptop',
+    purchaseDate: DateTime(2025, 1, 1),
+    warrantyEndDate: DateTime(2026, 1, 1),
+    createdAt: DateTime(2025, 1, 1),
+    updatedAt: DateTime(2025, 1, 1),
+  );
+}
+
+class _ReminderSyncSpy {
+  int calls = 0;
+  bool shouldThrow = false;
+
+  Future<void> call() async {
+    calls++;
+    if (shouldThrow) {
+      throw Exception('reminder sync failed');
+    }
+  }
 }
 
 Future<int> _insertProduct(ProductDao dao) {

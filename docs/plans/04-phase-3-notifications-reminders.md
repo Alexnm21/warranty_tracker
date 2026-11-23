@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** in progress (step 3 of 6 complete)
+**Status:** in progress (step 4 of 6 complete)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -152,19 +152,19 @@ Any change requires explicit approval before implementation.
 
 ## 5) Integration — Keeping Reminders Correct
 
-- [ ] **Startup sync**: after DI and plugin initialization, call
+- [x] **Startup sync**: after DI and plugin initialization, call
       `sync()` once. It must not request permission and must be safe when no
       products exist or reminders are disabled.
-- [ ] **Product lifecycle hooks**: `ProductRepositoryImpl` calls
+- [x] **Product lifecycle hooks**: `ProductRepositoryImpl` calls
       `ReminderScheduler.sync()` after `create`, `update` and `delete`.
       Failures are logged, never propagated (same rule as stored-file cleanup
       in Phase 2).
 - [ ] **Settings changes**: saving the settings triggers a sync, so enabling,
       disabling or changing the lead time takes effect immediately.
-- [ ] **Deleted products / changed dates**: covered by the resync derived from
+- [x] **Deleted products / changed dates**: covered by the resync derived from
       the database; the planner only sees current rows.
-- [ ] **Android reboot**: add the boot receiver so the plugin reschedules after
-      a reboot.
+- [x] **Android reboot**: add the boot receiver so the plugin reschedules after
+      a reboot (already added in step 1).
 - [ ] **App resume (optional, only if needed)**: if permission or timezone
       changes are not reflected, resync when the settings screen becomes
       current (`ModalRoute.isCurrentOf`), per AGENTS.md §7.
@@ -236,7 +236,7 @@ Any change requires explicit approval before implementation.
 - [x] Scheduler tests with fakes for settings, products and gateway:
       disabled → cancel only; permission denied → cancel only; enabled →
       deterministic schedule list; gateway failure → swallowed and logged.
-- [ ] `ProductRepositoryImpl` tests updated: sync runs after create/update/
+- [x] `ProductRepositoryImpl` tests updated: sync runs after create/update/
       delete and a sync failure does not fail the operation.
 - [ ] `ReminderSettingsCubit` tests: load, toggle granted, toggle denied,
       lead-time change, save error, permission-blocked refresh.

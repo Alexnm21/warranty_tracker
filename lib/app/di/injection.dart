@@ -41,8 +41,12 @@ void setupInjection({AppDatabase? database}) {
   );
 
   getIt.registerLazySingleton<ProductRepository>(
-    () =>
-        ProductRepositoryImpl(getIt<ProductDao>(), getIt<DocumentRepository>()),
+    () => ProductRepositoryImpl(
+      getIt<ProductDao>(),
+      getIt<DocumentRepository>(),
+      // Resolved on demand: the scheduler itself reads ProductRepository.
+      reminderSync: () => getIt<ReminderScheduler>().sync(),
+    ),
   );
   getIt.registerLazySingleton<DocumentImporter>(
     () => DocumentImporter(storage: getIt<DocumentFileStorage>()),
