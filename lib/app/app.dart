@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:warranty_tracker/app/router/app_router.dart';
-import 'package:warranty_tracker/app/theme/app_theme.dart';
+
+import 'router/app_router.dart';
+import 'theme/app_theme.dart';
 
 class App extends StatefulWidget {
   const App({super.key});

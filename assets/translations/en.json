@@ -6,11 +6,130 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "edit": "Edit"
+  },
+  "documents": {
+    "remove": {
+      "title": "Delete document",
+      "action": "Delete",
+      "message": "Delete \"{name}\"? This can't be undone."
+    },
+    "error": {
+      "delete": "Could not delete the document"
+    }
   },
   "shell": {
     "home": "Home",
     "products": "Products",
     "settings": "Settings"
+  },
+  "products": {
+    "title": "Products",
+    "add": "Add product",
+    "search": "Search products",
+    "noResults": "No products found",
+    "unknown": "Not provided",
+    "empty": {
+      "title": "No products yet",
+      "description": "Add your first product to track its warranty."
+    },
+    "delete": {
+      "title": "Delete product",
+      "message": "Delete \"{name}\"? This can't be undone."
+    },
+    "error": {
+      "load": "Could not load products",
+      "save": "Could not save the product",
+      "delete": "Could not delete the product"
+    },
+    "detail": {
+      "brand": "Brand",
+      "model": "Model",
+      "store": "Store",
+      "purchaseDate": "Purchase date",
+      "price": "Price",
+      "serialNumber": "Serial number",
+      "notes": "Notes",
+      "warranty": "Warranty",
+      "warrantyEndDate": "Warranty end",
+      "notFound": "Product not found",
+      "documents": {
+        "title": "Documents",
+        "empty": "No documents attached",
+        "loadError": "Could not load documents",
+        "retry": "Retry"
+      }
+    },
+    "form": {
+      "title": {
+        "create": "New product",
+        "edit": "Edit product"
+      },
+      "name": "Name",
+      "brand": "Brand",
+      "model": "Model",
+      "store": "Store",
+      "purchaseDate": "Purchase date",
+      "price": "Price",
+      "currency": "Currency",
+      "serialNumber": "Serial number",
+      "warrantyEndDate": "Warranty end",
+      "notes": "Notes",
+      "save": "Save",
+      "error": {
+        "nameRequired": "Name is required",
+        "purchaseDateRequired": "Purchase date is required",
+        "warrantyEndRequired": "Warranty end is required",
+        "warrantyEndBeforePurchase": "Warranty end must be on or after the purchase date",
+        "priceInvalid": "Enter a valid non-negative price",
+        "currencyRequired": "Currency is required when a price is set"
+      },
+      "section": {
+        "purchase": "Purchase Information",
+        "warranty": "Warranty Information",
+        "documents": "Attached Documents"
+      },
+      "documents": {
+        "actions": {
+          "scan": "Scan",
+          "upload": "Upload",
+          "photo": "Photo"
+        },
+        "importing": "Importing document…",
+        "empty": "No documents attached",
+        "emptyHint": "Add a receipt, invoice or warranty document.",
+        "pending": "Pending save",
+        "open": "Open",
+        "remove": {
+          "stagedMessage": "Remove \"{name}\"? The file will be discarded.",
+          "savedMessage": "Remove \"{name}\" from this product? The change is applied when you save."
+        },
+        "error": {
+          "import": "Could not import the document",
+          "emptyFile": "The selected file is empty",
+          "unsupportedType": "Only PDF, JPG, PNG, HEIC and WEBP files are supported",
+          "fileTooLarge": "The file must be 25 MB or smaller",
+          "permissionDenied": "Permission denied. Allow access in system settings and try again.",
+          "open": "Could not open the document",
+          "fileNotFound": "The document file could not be found",
+          "noApp": "No app is available to open this document"
+        }
+      },
+      "duration": "Warranty Duration",
+      "years": {
+        "one": "{} year",
+        "other": "{} years"
+      },
+      "custom": "Custom",
+      "calculated_date": "Calculated Expiry Date"
+    },
+    "warranty": {
+      "status": {
+        "future": "Not started",
+        "active": "Active",
+        "expired": "Expired"
+      }
+    }
   }
 }

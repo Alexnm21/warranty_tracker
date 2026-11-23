@@ -191,6 +191,8 @@ Rules:
 * Route configuration must remain independent from individual widgets as much as practical.
 * Do not place navigation logic throughout business/domain code.
 * Authentication or other future route guards should be implemented through go_router mechanisms rather than ad-hoc checks.
+* **Pages under a nested go_router route must refresh their state when their route becomes current again.**
+  *Why this rule exists:* go_router keeps a parent route (and everything above it in the widget tree, including its `BlocProvider` and Cubits) alive while a child route such as `/products/new` is on top. So `BlocProvider(create:)` does not re-run when the child is popped, and the parent silently keeps showing stale data. This already caused a real bug in Phase 1: after creating a product the list still showed "No products yet" even though the row was saved. Handle it in `didChangeDependencies` with `ModalRoute.isCurrentOf(context)` — that API registers an inherited dependency on the route's `isCurrent`, so the callback fires exactly on push/pop and not on ordinary rebuilds (see `product_list_page.dart`). Do not work around it by adding redundant route pushes or by assuming the Cubit is recreated.
 
 ---
 
@@ -617,7 +619,21 @@ Do not consider a task complete merely because the code compiles.
 
 ---
 
-# 28. Final Rule
+# 28. Phase Development Workflow
+
+When developing a phase from a plan (e.g. `docs/plans/*.md`), follow these rules strictly:
+
+1. **Break into steps**: Split the plan into small, verifiable steps. For each step, present a clear list of files to create/modify and the exact changes you will make.
+2. **Get approval first**: Before executing any code changes for a step, show the proposed changes and wait for explicit approval ("ok", "go", "yes", "aprobado", etc.). Do not proceed until approved.
+3. **Execute one step at a time**: Implement only the approved step. After implementation, summarize what was done and verify (format/analyze relevant checks). Do not move to next step without approval.
+4. **Keep scope minimal**: Only do what is listed in the current approved step. Avoid refactoring unrelated code.
+5. **Update the plan**: After completing an approved step, mark the corresponding checklist items as `[x]` in the plan file.
+6. **Verify quality**: For each step that produces code, run `dart format .` and relevant `flutter analyze` checks. Run tests if the step affects logic.
+7. **Respect plan/roadmap**: Plans are execution aids; `ROADMAP.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `DESIGN.md` are source of truth.
+
+---
+
+# 29. Final Rule
 
 When in doubt:
 

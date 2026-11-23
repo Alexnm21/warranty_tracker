@@ -2,6 +2,9 @@
 abstract final class RouteNames {
   static const String home = 'home';
   static const String productList = 'productList';
+  static const String productNew = 'productNew';
+  static const String productDetail = 'productDetail';
+  static const String productEdit = 'productEdit';
   static const String settings = 'settings';
 }
 

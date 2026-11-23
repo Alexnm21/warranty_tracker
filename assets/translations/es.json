@@ -6,11 +6,130 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "edit": "Editar"
+  },
+  "documents": {
+    "remove": {
+      "title": "Eliminar documento",
+      "action": "Eliminar",
+      "message": "¿Eliminar \"{name}\"? Esta acción no se puede deshacer."
+    },
+    "error": {
+      "delete": "No se pudo eliminar el documento"
+    }
   },
   "shell": {
     "home": "Inicio",
     "products": "Productos",
     "settings": "Ajustes"
+  },
+  "products": {
+    "title": "Productos",
+    "add": "Añadir producto",
+    "search": "Buscar productos",
+    "noResults": "No se encontraron productos",
+    "unknown": "No indicado",
+    "empty": {
+      "title": "Aún no hay productos",
+      "description": "Añade tu primer producto para controlar su garantía."
+    },
+    "delete": {
+      "title": "Eliminar producto",
+      "message": "¿Eliminar \"{name}\"? No se puede deshacer."
+    },
+    "error": {
+      "load": "No se pudieron cargar los productos",
+      "save": "No se pudo guardar el producto",
+      "delete": "No se pudo eliminar el producto"
+    },
+    "detail": {
+      "brand": "Marca",
+      "model": "Modelo",
+      "store": "Tienda",
+      "purchaseDate": "Fecha de compra",
+      "price": "Precio",
+      "serialNumber": "Número de serie",
+      "notes": "Notas",
+      "warranty": "Garantía",
+      "warrantyEndDate": "Fin de garantía",
+      "notFound": "Producto no encontrado",
+      "documents": {
+        "title": "Documentos",
+        "empty": "No hay documentos adjuntos",
+        "loadError": "No se pudieron cargar los documentos",
+        "retry": "Reintentar"
+      }
+    },
+    "form": {
+      "title": {
+        "create": "Nuevo producto",
+        "edit": "Editar producto"
+      },
+      "name": "Nombre",
+      "brand": "Marca",
+      "model": "Modelo",
+      "store": "Tienda",
+      "purchaseDate": "Fecha de compra",
+      "price": "Precio",
+      "currency": "Moneda",
+      "serialNumber": "Número de serie",
+      "warrantyEndDate": "Fin de garantía",
+      "notes": "Notas",
+      "save": "Guardar",
+      "error": {
+        "nameRequired": "El nombre es obligatorio",
+        "purchaseDateRequired": "La fecha de compra es obligatoria",
+        "warrantyEndRequired": "El fin de garantía es obligatorio",
+        "warrantyEndBeforePurchase": "El fin de garantía debe ser igual o posterior a la fecha de compra",
+        "priceInvalid": "Introduce un precio válido no negativo",
+        "currencyRequired": "La moneda es obligatoria si hay precio"
+      },
+      "section": {
+        "purchase": "Información de compra",
+        "warranty": "Información de garantía",
+        "documents": "Documentos adjuntos"
+      },
+      "documents": {
+        "actions": {
+          "scan": "Escanear",
+          "upload": "Subir",
+          "photo": "Foto"
+        },
+        "importing": "Importando documento…",
+        "empty": "No hay documentos adjuntos",
+        "emptyHint": "Añade un recibo, una factura o un documento de garantía.",
+        "pending": "Pendiente de guardar",
+        "open": "Abrir",
+        "remove": {
+          "stagedMessage": "¿Eliminar \"{name}\"? El archivo se descartará.",
+          "savedMessage": "¿Eliminar \"{name}\" de este producto? El cambio se aplicará al guardar."
+        },
+        "error": {
+          "import": "No se pudo importar el documento",
+          "emptyFile": "El archivo seleccionado está vacío",
+          "unsupportedType": "Solo se admiten archivos PDF, JPG, PNG, HEIC y WEBP",
+          "fileTooLarge": "El archivo debe pesar 25 MB o menos",
+          "permissionDenied": "Permiso denegado. Permite el acceso en los ajustes del sistema e inténtalo de nuevo.",
+          "open": "No se pudo abrir el documento",
+          "fileNotFound": "No se encontró el archivo del documento",
+          "noApp": "No hay ninguna aplicación disponible para abrir este documento"
+        }
+      },
+      "duration": "Duration de Garantía",
+      "years": {
+        "one": "{} año",
+        "other": "{} años"
+      },
+      "custom": "Otro",
+      "calculated_date": "Fecha de Expiración Calculada"
+    },
+    "warranty": {
+      "status": {
+        "future": "No iniciada",
+        "active": "Activa",
+        "expired": "Expirada"
+      }
+    }
   }
 }

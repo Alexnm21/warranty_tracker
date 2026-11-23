@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 abstract final class AppTextStyles {
   static const String _fontFamily = 'Inter';
 
+  /// font size: 32
+  /// font weight: 700
+  /// line height: 40
   static const TextStyle display = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 32,
@@ -11,6 +14,9 @@ abstract final class AppTextStyles {
     height: 40 / 32,
   );
 
+  /// font size: 24
+  /// font weight: 600
+  /// line height: 32
   static const TextStyle headline = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 24,
@@ -18,6 +24,9 @@ abstract final class AppTextStyles {
     height: 32 / 24,
   );
 
+  /// font size: 18
+  /// font weight: 600
+  /// line height: 26
   static const TextStyle title = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 18,
@@ -25,6 +34,9 @@ abstract final class AppTextStyles {
     height: 26 / 18,
   );
 
+  /// font size: 16
+  /// font weight: 400
+  /// line height: 24
   static const TextStyle body = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16,
@@ -32,6 +44,9 @@ abstract final class AppTextStyles {
     height: 24 / 16,
   );
 
+  /// font size: 14
+  /// font weight: 400
+  /// line height: 20
   static const TextStyle bodySmall = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 14,
@@ -39,6 +54,9 @@ abstract final class AppTextStyles {
     height: 20 / 14,
   );
 
+  /// font size: 12
+  /// font weight: 400
+  /// line height: 16
   static const TextStyle caption = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 12,
@@ -46,6 +64,9 @@ abstract final class AppTextStyles {
     height: 16 / 12,
   );
 
+  /// font size: 14
+  /// font weight: 600
+  /// line height: 20
   static const TextStyle label = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 14,
@@ -53,6 +74,9 @@ abstract final class AppTextStyles {
     height: 20 / 14,
   );
 
+  /// font size: 12
+  /// font weight: 600
+  /// line height: 16
   static const TextStyle labelSmall = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 12,
@@ -60,6 +84,9 @@ abstract final class AppTextStyles {
     height: 16 / 12,
   );
 
+  /// font size: 15
+  /// font weight: 600
+  /// line height: 20
   static const TextStyle numeric = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 15,

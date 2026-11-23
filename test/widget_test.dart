@@ -1,10 +1,13 @@
+import 'package:drift/native.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:warranty_tracker/app/app.dart';
+import 'package:warranty_tracker/app/di/injection.dart';
 import 'package:warranty_tracker/app/shell_page.dart';
+import 'package:warranty_tracker/core/database/app_database.dart';
 
 void main() {
   testWidgets('app renders the main shell with three destinations', (
@@ -13,6 +16,7 @@ void main() {
     WidgetsFlutterBinding.ensureInitialized();
     SharedPreferences.setMockInitialValues({});
     await EasyLocalization.ensureInitialized();
+    setupInjection(database: AppDatabase.forTesting(NativeDatabase.memory()));
 
     await tester.pumpWidget(
       EasyLocalization(

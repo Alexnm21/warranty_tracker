@@ -116,6 +116,9 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surfaceContainerLowest,
+        hintStyle: AppTextStyles.bodySmall.copyWith(
+          color: AppColors.outline.withValues(alpha: 0.7),
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadii.md),
@@ -146,6 +149,26 @@ abstract final class AppTheme {
           ),
         ),
         showDragHandle: true,
+      ),
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.surfaceContainerLow,
+        shadowColor: Colors.black.withValues(alpha: 0.05),
+        surfaceTintColor: Colors.transparent,
+        elevation: 1,
+        centerTitle: false,
+        titleTextStyle: AppTextStyles.title.copyWith(
+          color: AppColors.onSurface,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadii.full),
+        ),
       ),
     );
   }
