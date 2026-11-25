@@ -9,7 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Needed by widget tests for components that call `.tr()` or format dates:
 /// `GlobalMaterialLocalizations` (included in `context.localizationDelegates`)
 /// initializes `intl`'s date symbols.
-Future<void> pumpLocalized(WidgetTester tester, Widget child) async {
+Future<void> pumpLocalized(
+  WidgetTester tester,
+  Widget child, {
+  bool settle = true,
+}) async {
   if (!_initialized) {
     SharedPreferences.setMockInitialValues({});
     await EasyLocalization.ensureInitialized();
@@ -36,7 +40,12 @@ Future<void> pumpLocalized(WidgetTester tester, Widget child) async {
     await Future<void>.delayed(const Duration(milliseconds: 50));
   });
 
-  await tester.pumpAndSettle();
+  // Screens with an indeterminate progress indicator never settle.
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+  }
 }
 
 bool _initialized = false;

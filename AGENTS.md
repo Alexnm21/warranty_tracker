@@ -304,6 +304,11 @@ Rules:
 * The UI should display meaningful user-facing error states.
 * Do not expose technical exception messages directly to users.
 * Logging should contain useful debugging information without exposing sensitive data.
+* Best-effort side effects must never fail an already-completed primary operation.
+  When a follow-up action such as stored-file cleanup or reminder resync fails
+  after the main work is committed, log the failure and let the primary
+  operation succeed. This does not excuse silent failures: the log must keep
+  the cause.
 
 ---
 
@@ -390,6 +395,11 @@ Test important state transitions and user flows.
 ### Widget tests
 
 Use widget tests for important reusable components and critical screens.
+
+* Screens with an indeterminate progress indicator (`CircularProgressIndicator`)
+  never settle, so `pumpAndSettle` always times out. Use
+  `pumpLocalized(..., settle: false)` or `pumpUntilFound` in that case and keep
+  `pumpAndSettle` for stable trees.
 
 ### Integration tests
 

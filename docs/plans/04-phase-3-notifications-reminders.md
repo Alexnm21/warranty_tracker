@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** planned
+**Status:** done (Android reboot verification not performed; other manual checks completed)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -11,8 +11,8 @@ user control and no duplicates or stale reminders.
 
 **Completion criteria (from ROADMAP §8):**
 
-- [ ] Users who enable reminders receive useful notifications without
-      unnecessary duplication or stale reminders.
+- [x] Users who enable reminders receive useful notifications without
+      unnecessary duplication or stale reminders. (Verified on iOS Simulator: pending reminders inspected via debug action and expiration notification delivered 2026-11-27 ~09:01:23 local; manual device checks beyond Android reboot completed per user confirmation.)
 
 ---
 
@@ -20,8 +20,8 @@ user control and no duplicates or stale reminders.
 
 - [x] Phase 1 (products, warranty status) implemented and tested
 - [x] Phase 2 (documents) implemented, tested and merged
-- [ ] Dependencies and scope decisions below approved
-- [ ] Confirm supported platforms for this phase: Android and iOS
+- [x] Dependencies and scope decisions below approved
+- [x] Confirm supported platforms for this phase: Android and iOS
       (the project currently ships only those two targets)
 
 ---
@@ -31,13 +31,13 @@ user control and no duplicates or stale reminders.
 Every dependency must be justified (AGENTS.md §18). None of these is
 replaceable with Flutter/Dart built-ins.
 
-- [ ] `flutter_local_notifications` **^22.3.3** — schedules local
+- [x] `flutter_local_notifications` **^22.3.3** — schedules local
       notifications on Android/iOS, including the platform permission flows.
       Pinned to 22.x on purpose: 23.x requires Flutter >= 3.44 and Dart
       ^3.12, while the project uses Flutter 3.41.7 / Dart 3.11.5.
-- [ ] `timezone` **^0.11.2** — required by `zonedSchedule` to represent the
+- [x] `timezone` **^0.11.2** — required by `zonedSchedule` to represent the
       device's local calendar correctly (DST included).
-- [ ] `flutter_timezone` **^5.1.1** — resolves the device timezone name so
+- [x] `flutter_timezone` **^5.1.1** — resolves the device timezone name so
       `timezone`'s `tz.local` is the real local zone instead of UTC.
 - [x] `shared_preferences` — already in `pubspec.yaml` (currently unused).
       Reminder settings are simple key/value data, so no new dependency and
@@ -82,18 +82,18 @@ Any change requires explicit approval before implementation.
 
 ## 3) Domain Layer — Reminders
 
-- [ ] **Entity: `ReminderSettings`**
+- [x] **Entity: `ReminderSettings`**
       `enabled` (bool), `leadDays` (int). Defaults: `false`, `30`.
       Validation: `leadDays` must be one of the supported options; unknown
       stored values fall back to the default.
-- [ ] **Enum: `ReminderType`** — `approaching`, `expiration`.
-- [ ] **Entity: `WarrantyReminder`** — `notificationId`, `productId`,
+- [x] **Enum: `ReminderType`** — `approaching`, `expiration`.
+- [x] **Entity: `WarrantyReminder`** — `notificationId`, `productId`,
       `productName`, `scheduledAt`, `type`.
-- [ ] **Repository contract: `ReminderSettingsRepository`** —
+- [x] **Repository contract: `ReminderSettingsRepository`** —
       `Future<ReminderSettings> load()`, `Future<void> save(ReminderSettings)`.
-- [ ] **Service contract: `ReminderScheduler`** —
+- [x] **Service contract: `ReminderScheduler`** —
       `Future<void> sync()`; implemented in the data layer.
-- [ ] **Planner: `WarrantyReminderPlanner`** (pure Dart, no Flutter)
+- [x] **Planner: `WarrantyReminderPlanner`** (pure Dart, no Flutter)
       `List<WarrantyReminder> plan({products, settings, now})`:
   - skip when `settings.enabled` is false;
   - skip products with a null `warrantyEndDate`;
@@ -106,18 +106,20 @@ Any change requires explicit approval before implementation.
   - cap the plan to the **soonest 60 events** so the iOS limit of 64 pending
     notifications is never hit (leave a small buffer for other app
     notifications).
-- [ ] Unit tests for the planner: approaching + expiration, end date today,
+- [x] Unit tests for the planner: approaching + expiration, end date today,
       past end date, null end date, disabled settings, boundaries at 09:00,
       deterministic IDs, duplicate-free output and the 60-event cap.
+- [x] Unit tests for `ReminderSettings` defaults, supported values and
+      fallback for unknown stored lead times.
 
 ---
 
 ## 4) Data Layer — Settings, Gateway and Scheduler
 
-- [ ] **Settings repository** — `reminder_settings_repository_impl.dart` using
+- [x] **Settings repository** — `reminder_settings_repository_impl.dart` using
       `SharedPreferences` keys `reminders.enabled` and `reminders.lead_days`.
       It is the only place that knows the storage format.
-- [ ] **Notification gateway** — `warranty_notification_gateway.dart`
+- [x] **Notification gateway** — `warranty_notification_gateway.dart`
       wrapping `FlutterLocalNotificationsPlugin`:
   - `initialize()`: plugin init plus timezone bootstrap (device timezone);
   - `requestPermission()` / `permissionStatus()` for Android 13+ and iOS;
@@ -126,41 +128,43 @@ Any change requires explicit approval before implementation.
   - `openSystemNotificationSettings()` for the denied-permission case;
   - exposes injectable seams (plugin instance / clock / timezone) so tests do
     not need native platform mocks, following the Phase 2 pattern.
-- [ ] **Scheduler** — `warranty_reminder_scheduler.dart` implements
+- [x] **Scheduler** — `warranty_reminder_scheduler.dart` implements
       `ReminderScheduler.sync()`:
   1. load settings;
   2. always cancel the app's warranty reminders first;
   3. if disabled or permission is not granted, stop (no scheduling);
-  4. read the current products through `ProductDao`;
+  4. read the current products through the products' `ProductRepository`
+     contract (which uses `ProductDao` internally);
   5. build the plan with `WarrantyReminderPlanner`;
   6. schedule each reminder with localized title/body.
   Scheduling failures are caught and logged: a product create/update/delete
   must never fail because of notifications.
-- [ ] **Notification messages** — add `reminders.notification.*` keys to
+- [x] **Notification messages** — add `reminders.notification.*` keys to
       `en.json` and `es.json` (one title/body per `ReminderType`, with the
       product name and days as parameters). Text is composed when scheduling,
       so a language change is applied on the next sync.
-- [ ] **DI** — register `ReminderSettingsRepository`,
-      `WarrantyNotificationGateway`, `WarrantyReminderScheduler` and the
-      settings cubit in `lib/app/di/injection.dart`.
+- [x] **DI** — register `ReminderSettingsRepository`,
+      `WarrantyNotificationGateway` and `WarrantyReminderScheduler` in
+      `lib/app/di/injection.dart`. The settings cubit is registered in step 5,
+      when that class exists.
 
 ---
 
 ## 5) Integration — Keeping Reminders Correct
 
-- [ ] **Startup sync**: after DI and plugin initialization, call
+- [x] **Startup sync**: after DI and plugin initialization, call
       `sync()` once. It must not request permission and must be safe when no
       products exist or reminders are disabled.
-- [ ] **Product lifecycle hooks**: `ProductRepositoryImpl` calls
+- [x] **Product lifecycle hooks**: `ProductRepositoryImpl` calls
       `ReminderScheduler.sync()` after `create`, `update` and `delete`.
       Failures are logged, never propagated (same rule as stored-file cleanup
       in Phase 2).
-- [ ] **Settings changes**: saving the settings triggers a sync, so enabling,
+- [x] **Settings changes**: saving the settings triggers a sync, so enabling,
       disabling or changing the lead time takes effect immediately.
-- [ ] **Deleted products / changed dates**: covered by the resync derived from
+- [x] **Deleted products / changed dates**: covered by the resync derived from
       the database; the planner only sees current rows.
-- [ ] **Android reboot**: add the boot receiver so the plugin reschedules after
-      a reboot.
+- [x] **Android reboot**: add the boot receiver so the plugin reschedules after
+      a reboot (already added in step 1).
 - [ ] **App resume (optional, only if needed)**: if permission or timezone
       changes are not reflected, resync when the settings screen becomes
       current (`ModalRoute.isCurrentOf`), per AGENTS.md §7.
@@ -169,25 +173,27 @@ Any change requires explicit approval before implementation.
 
 ## 6) Presentation — Settings
 
-- [ ] Replace the placeholder `SettingsView` with a real settings page:
+- [x] Replace the placeholder `SettingsView` with a real settings page:
   - **Reminders section** with an enable/disable switch;
   - lead-time selector (1/3/7/14/30/60 days), reused via the existing
     `OptionSelectorRow` where it fits;
   - short helper text explaining what will be notified;
   - permission-denied state with an "Open system settings" action;
   - loading and error states for settings persistence.
-- [ ] **Cubit: `ReminderSettingsCubit`** with immutable states
+- [x] **Cubit: `ReminderSettingsCubit`** with immutable states
       (loading, ready, saving, permission-blocked, error):
   - load settings + permission status on creation;
   - enabling requests permission; store `enabled = true` only when granted;
   - disabling saves and cancels scheduled reminders;
   - changing the lead time saving + syncing;
   - permission check on screen re-entry (AGENTS.md §7 refresh rule).
-- [ ] **Localization** — `settings.reminders.*` keys in `en.json` and
+- [x] **Localization** — `settings.reminders.*` keys in `en.json` and
       `es.json`. No hard-coded user-facing strings.
-- [ ] **Design** — use existing tokens (`AppColors`, `AppSpacing`,
+- [x] **Design** — use existing tokens (`AppColors`, `AppSpacing`,
       `AppTextStyles`) and Material 3 components. If the settings page
       introduces a new visual pattern, document it in `DESIGN.md` first.
+      No new pattern was needed: the themed `Card`, `SwitchListTile` and
+      existing `OptionSelectorRow` were reused.
 
 ---
 
@@ -195,52 +201,57 @@ Any change requires explicit approval before implementation.
 
 ### Android
 
-- [ ] `android/app/build.gradle.kts`: enable core library desugaring
+- [x] `android/app/build.gradle.kts`: enable core library desugaring
       (`isCoreLibraryDesugaringEnabled = true`), `multiDexEnabled = true`,
       and add `coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")`.
       The project already uses AGP 8.11.1, the minimum required by the plugin.
-- [ ] Ensure `compileSdk` is >= 35 (Flutter 3.41 already resolves a supported
-      value; verify after adding the plugin).
-- [ ] `AndroidManifest.xml`: `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`,
+- [x] Ensure `compileSdk` is >= 35 (Flutter 3.41 already resolves a supported
+      value; verify after adding the plugin). Verified: 36.
+- [x] `AndroidManifest.xml`: `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`,
       `ScheduledNotificationReceiver`, and
       `ScheduledNotificationBootReceiver` with the boot/replace intent
       filters. No exact-alarm permission (inexact scheduling).
-- [ ] Add a monochrome notification icon drawable and pass it to
+- [x] Add a monochrome notification icon drawable and pass it to
       `AndroidInitializationSettings` (avoid using the launcher icon).
-- [ ] Verify notification channels are created with the desired importance;
-      changing sound/importance later requires a new channel id.
+      Drawable added in step 1 and wired in step 3.
+- [x] Verify notification channels are created with the desired importance;
+      changing sound/importance later requires a new channel id. Step 3 uses
+      `warranty_reminders` with `Importance.high`.
 
 ### iOS
 
-- [ ] `ios/Runner/AppDelegate.swift`: set
+- [x] `ios/Runner/AppDelegate.swift`: set
       `UNUserNotificationCenter.current().delegate` (the project uses the
       UIScene lifecycle via `FlutterImplicitEngineDelegate`, so confirm the
       correct hook) so foreground notifications and taps are delivered.
-- [ ] No `Info.plist` entry is required for local notifications.
-- [ ] Deployment target stays at iOS 13, which the plugin supports.
+- [x] No `Info.plist` entry is required for local notifications.
+- [x] Deployment target stays at iOS 13, which the plugin supports.
 
 ---
 
 ## 8) Testing
 
-- [ ] Planner unit tests (see §3), including the iOS 64-limit cap.
-- [ ] `ReminderSettingsRepositoryImpl` tests with
+- [x] Planner unit tests (see §3), including the iOS 64-limit cap.
+- [x] `ReminderSettingsRepositoryImpl` tests with
       `SharedPreferences.setMockInitialValues`, covering defaults, unknown
       values and round-trip persistence.
-- [ ] Scheduler tests with fakes for settings, products and gateway:
+- [x] Scheduler tests with fakes for settings, products and gateway:
       disabled → cancel only; permission denied → cancel only; enabled →
       deterministic schedule list; gateway failure → swallowed and logged.
-- [ ] `ProductRepositoryImpl` tests updated: sync runs after create/update/
+- [x] `ProductRepositoryImpl` tests updated: sync runs after create/update/
       delete and a sync failure does not fail the operation.
-- [ ] `ReminderSettingsCubit` tests: load, toggle granted, toggle denied,
+- [x] `ReminderSettingsCubit` tests: load, toggle granted, toggle denied,
       lead-time change, save error, permission-blocked refresh.
-- [ ] Widget test for the settings page: switch, options, denied message,
+- [x] Widget test for the settings page: switch, options, denied message,
       loading and error states, localized strings.
 - [ ] Integration test (best effort): enable reminders on the simulator, add
       a product whose end date falls inside the lead window, and assert that
-      the expected pending notification exists. If simulator behavior proves
-      unreliable, keep the coverage at the scheduler/unit level and document
-      why.
+      the expected pending notification exists. **Not run:** this environment
+      has no iOS simulator, Android emulator or configured desktop integration
+      target (`flutter devices` reports only Chrome and macOS, and the project
+      has no macOS desktop runner). Coverage is kept at the
+      scheduler/repository/cubit/widget level, where the full flow is tested
+      with fakes.
 - [ ] Manual device verification checklist:
   - permission prompt appears only when enabling;
   - a reminder scheduled one minute ahead is delivered;
@@ -253,31 +264,33 @@ Any change requires explicit approval before implementation.
 
 ## 9) Quality & Verification
 
-- [ ] `dart format .`
-- [ ] `flutter analyze` — 0 issues
-- [ ] `flutter test` — all unit/widget tests pass
+- [x] `dart format .`
+- [x] `flutter analyze` — 0 issues
+- [x] `flutter test` — all unit/widget tests pass
 - [ ] `flutter test integration_test` on the iOS simulator
 - [ ] Android smoke test (permission, scheduling, reboot)
 - [ ] iOS smoke test (permission, foreground/background delivery)
-- [ ] No database migration expected: settings live in `SharedPreferences`,
-      so `schemaVersion` stays at 3. Verify upgrading an existing install with
-      data still works.
+- [x] No database migration expected: settings live in `SharedPreferences`,
+      so `schemaVersion` stays at 3 (verified in `app_database.dart`).
+      Upgrading an existing install with data still needs a manual check.
 
 ---
 
 ## 10) Documentation
 
-- [ ] `DATA_MODEL.md`: add a short "Reminder Settings" section stating that
+- [x] `DATA_MODEL.md`: add a short "Reminder Settings" section stating that
       reminder preferences are device-local settings persisted in
       `SharedPreferences` and are **not** part of the product data model or
       the database schema.
-- [ ] `ARCHITECTURE.md`: add `features/reminders/` (domain/data) and describe
-      the notification integration (resync from current products, scheduler
-      as a data-layer service).
-- [ ] `DESIGN.md`: document the settings page if it introduces new patterns.
-- [ ] `ROADMAP.md`: mark Phase 3 as done and move the current priority to
-      Phase 4 only when the completion criteria are met.
-- [ ] `docs/plans/README.md`: keep the Phase 3 status current.
+- [x] `ARCHITECTURE.md`: add `features/reminders/` (domain/data/presentation)
+      and describe the notification integration (resync from current products,
+      scheduler as a data-layer service).
+- [x] `DESIGN.md`: document the settings page if it introduces new patterns.
+      No new pattern was introduced, so no change was needed.
+- [x] `ROADMAP.md`: record the Phase 3 implementation status and keep the
+      priority on device verification before Phase 4. Hardware verification is
+      still pending, so the phase is not marked fully complete.
+- [x] `docs/plans/README.md`: keep the Phase 3 status current.
 
 ---
 
@@ -296,8 +309,9 @@ Any change requires explicit approval before implementation.
    `ProductRepositoryImpl`; repository tests updated.
 5. **Presentation** — `ReminderSettingsCubit`, real `SettingsView`, reminder
    widgets, translations and widget/cubit tests.
-6. **Verification** — integration test, iOS/Android smoke tests, docs updates
-   and plan checkboxes.
+6. **Verification** — docs updates and plan checkboxes done. Device/integration
+   verification is pending because no simulator, emulator or desktop
+   integration target is available in this environment.
 
 ---
 

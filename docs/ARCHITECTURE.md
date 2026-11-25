@@ -142,6 +142,11 @@ lib/
 │   │   ├── domain/
 │   │   └── presentation/
 │   │
+│   ├── reminders/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │
 │   └── settings/
 │       ├── data/
 │       ├── domain/
@@ -209,6 +214,7 @@ features/
 ├── products/
 ├── warranties/
 ├── documents/
+├── reminders/
 ├── settings/
 └── ...
 ```
@@ -1062,7 +1068,65 @@ The architecture should serve the application, not the other way around.
 
 ---
 
-# 34. Source of Truth
+# 34. Notification Architecture
+
+Local reminders live in the `reminders` feature and follow the same layer
+boundaries as every other feature:
+
+```text
+reminders/
+├── data/
+│   ├── repositories/
+│   │   └── reminder_settings_repository_impl.dart
+│   └── services/
+│       ├── flutter_warranty_notification_gateway.dart
+│       ├── warranty_notification_gateway.dart
+│       └── warranty_reminder_scheduler.dart
+├── domain/
+│   ├── entities/
+│   │   ├── reminder_settings.dart
+│   │   ├── reminder_type.dart
+│   │   └── warranty_reminder.dart
+│   ├── repositories/
+│   │   └── reminder_settings_repository.dart
+│   └── services/
+│       ├── reminder_scheduler.dart
+│       └── warranty_reminder_planner.dart
+└── presentation/
+    ├── bloc/
+    │   ├── reminder_settings_cubit.dart
+    │   └── reminder_settings_state.dart
+    └── widgets/
+        └── reminder_settings_section.dart
+```
+
+Key decisions:
+
+* The planner is pure domain logic: it turns products plus settings into
+  deterministic `WarrantyReminder` values without Flutter, plugins or database
+  access. Notification IDs derive from the product ID and reminder type, so
+  repeated syncs cannot create duplicates.
+* `WarrantyNotificationGateway` is the only bridge to
+  `flutter_local_notifications`. It is abstracted because it isolates a plugin
+  and lets tests run without native channels.
+* `ReminderScheduler` is a domain contract implemented as a **data-layer**
+  service. `WarrantyReminderScheduler` reads products through the existing
+  `ProductRepository` contract (not `ProductDao` directly), so cross-feature
+  access stays at the domain boundary (§20).
+* Resync is derived from current state instead of tracked bookkeeping: pending
+  warranty reminders are cancelled first, then rebuilt from the current
+  products and settings. Deleted products and changed dates need no extra
+  bookkeeping.
+* Scheduling failures are logged and never propagated from product mutations
+  or settings saves, so the core flows remain reliable.
+* The settings Cubit depends on domain contracts plus the gateway abstraction;
+  it never instantiates plugins or repositories itself.
+* Permission is requested only from an explicit user action, never during
+  startup or screen load.
+
+---
+
+# 35. Source of Truth
 
 This document defines the project's architectural structure.
 

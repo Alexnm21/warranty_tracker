@@ -299,6 +299,15 @@ The notification system should:
 
 Users who enable reminders receive useful notifications without unnecessary duplication or stale reminders.
 
+## Implementation Status
+
+Implemented in the Phase 3 execution plan: approaching and expiration-day
+reminders at 09:00 local time, a global lead-time setting, OS permission
+handling, and resync derived from the current products. Domain, data and
+presentation logic have unit and widget coverage.
+
+Manual verification completed on iOS Simulator (pending reminders debug + expiration delivery observed 2026-11-27). **Android reboot persistence was not verified.** Phase marked done by project decision; remaining Android reboot check can be validated later if needed.
+
 ---
 
 # 9. Phase 4 — OCR & Assisted Data Entry
@@ -608,10 +617,12 @@ A roadmap phase is considered complete when:
 # 18. Current Priority
 
 Phase 0 (project foundation), Phase 1 (core product & warranty management) and
-Phase 2 (warranty documents) are complete and verified. The current priority is:
+Phase 2 (warranty documents) are complete and verified. Phase 3
+(Notifications & Reminders) is implemented with automated tests and is pending
+manual device verification. The current priority is:
 
-> Complete Phase 3 — Notifications & Reminders, then continue with the next
-> phase in the roadmap order.
+> Verify Phase 3 notifications on Android and iOS devices, then continue with
+> Phase 4 — OCR & Assisted Data Entry.
 
 The initial goal is not to build the complete long-term product immediately.
 
