@@ -20,6 +20,7 @@ class ReminderSettingsSection extends StatelessWidget {
     required this.onLeadDaysChanged,
     required this.onOpenSystemSettings,
     required this.onRetry,
+    required this.onDebugPrintPending,
   });
 
   final ReminderSettingsState state;
@@ -27,6 +28,7 @@ class ReminderSettingsSection extends StatelessWidget {
   final Future<void> Function(int days) onLeadDaysChanged;
   final Future<void> Function() onOpenSystemSettings;
   final Future<void> Function() onRetry;
+  final Future<void> Function() onDebugPrintPending;
 
   static final List<String> _leadDayOptions = ReminderSettings.leadDaysOptions
       .toList()
@@ -126,6 +128,12 @@ class ReminderSettingsSection extends StatelessWidget {
                 child: Text('common.retry'.tr()),
               ),
             ],
+            const SizedBox(height: AppSpacing.md),
+            OutlinedButton.icon(
+              onPressed: () => onDebugPrintPending(),
+              icon: const Icon(Icons.bug_report_outlined, size: 18),
+              label: const Text('Debug: print scheduled reminders'),
+            ),
           ],
         ),
       ),

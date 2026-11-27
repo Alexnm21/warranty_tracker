@@ -14,6 +14,7 @@ void main() {
     Future<void> Function(int)? onLeadDays,
     Future<void> Function()? onOpenSettings,
     Future<void> Function()? onRetry,
+    Future<void> Function()? onDebugPrintPending,
     bool settle = true,
   }) {
     return pumpLocalized(
@@ -24,6 +25,7 @@ void main() {
         onLeadDaysChanged: onLeadDays ?? (days) async {},
         onOpenSystemSettings: onOpenSettings ?? () async {},
         onRetry: onRetry ?? () async {},
+        onDebugPrintPending: onDebugPrintPending ?? () async {},
       ),
       settle: settle,
     );

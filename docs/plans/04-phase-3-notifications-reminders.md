@@ -1,6 +1,6 @@
 # Phase 3 — Notifications & Reminders
 
-**Status:** implementation complete — manual device verification pending
+**Status:** done (Android reboot verification not performed; other manual checks completed)
 
 **Source:** `ROADMAP.md` §8, `ARCHITECTURE.md` §32, `DATA_MODEL.md`,
 `DESIGN.md`, `AGENTS.md`
@@ -11,8 +11,8 @@ user control and no duplicates or stale reminders.
 
 **Completion criteria (from ROADMAP §8):**
 
-- [ ] Users who enable reminders receive useful notifications without
-      unnecessary duplication or stale reminders.
+- [x] Users who enable reminders receive useful notifications without
+      unnecessary duplication or stale reminders. (Verified on iOS Simulator: pending reminders inspected via debug action and expiration notification delivered 2026-11-27 ~09:01:23 local; manual device checks beyond Android reboot completed per user confirmation.)
 
 ---
 

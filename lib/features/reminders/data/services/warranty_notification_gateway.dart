@@ -1,3 +1,5 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import '../../domain/entities/warranty_reminder.dart';
 
 /// Platform boundary for local notifications. Implemented with the
@@ -18,4 +20,6 @@ abstract class WarrantyNotificationGateway {
   });
 
   Future<bool> openSystemNotificationSettings();
+
+  Future<List<PendingNotificationRequest>> getPendingReminders();
 }

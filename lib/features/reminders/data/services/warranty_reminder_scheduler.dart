@@ -50,15 +50,13 @@ class WarrantyReminderScheduler implements ReminderScheduler {
       for (final reminder in plan) {
         await _gateway.schedule(
           reminder,
-          title: _title(
-            reminder.type,
-          ).tr(namedArgs: {'productName': reminder.productName}),
-          body: _body(reminder.type).tr(
-            namedArgs: {
-              'productName': reminder.productName,
-              'days': settings.leadDays.toString(),
-            },
-          ),
+          title: _resolveText(_title(reminder.type), {
+            'productName': reminder.productName,
+          }),
+          body: _resolveText(_body(reminder.type), {
+            'productName': reminder.productName,
+            'days': settings.leadDays.toString(),
+          }),
         );
       }
     } catch (error) {
@@ -79,5 +77,25 @@ class WarrantyReminderScheduler implements ReminderScheduler {
       ReminderType.approaching => 'reminders.notification.approaching.body',
       ReminderType.expiration => 'reminders.notification.expiration.body',
     };
+  }
+
+  String _resolveText(String key, Map<String, String> namedArgs) {
+    final translated = key.tr(namedArgs: namedArgs);
+    // easy_localization returns the key when it cannot resolve it.
+    if (translated == key) {
+      if (key == 'reminders.notification.approaching.title') {
+        return 'Warranty for ${namedArgs['productName']} ends soon';
+      }
+      if (key == 'reminders.notification.approaching.body') {
+        return 'The warranty for ${namedArgs['productName']} ends in ${namedArgs['days']} days.';
+      }
+      if (key == 'reminders.notification.expiration.title') {
+        return 'Warranty for ${namedArgs['productName']} expires today';
+      }
+      if (key == 'reminders.notification.expiration.body') {
+        return 'The warranty for ${namedArgs['productName']} ends today.';
+      }
+    }
+    return translated;
   }
 }

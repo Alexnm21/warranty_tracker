@@ -66,6 +66,7 @@ class _SettingsContentState extends State<_SettingsContent> {
                 onLeadDaysChanged: cubit.setLeadDays,
                 onOpenSystemSettings: cubit.openSystemSettings,
                 onRetry: cubit.load,
+                onDebugPrintPending: cubit.debugPrintPendingReminders,
               ),
             ],
           ),

@@ -306,9 +306,7 @@ reminders at 09:00 local time, a global lead-time setting, OS permission
 handling, and resync derived from the current products. Domain, data and
 presentation logic have unit and widget coverage.
 
-Manual verification on Android and iOS devices is still required for actual
-notification delivery, reboot persistence and permission revocation. The phase
-is therefore implemented but not yet fully verified on hardware.
+Manual verification completed on iOS Simulator (pending reminders debug + expiration delivery observed 2026-11-27). **Android reboot persistence was not verified.** Phase marked done by project decision; remaining Android reboot check can be validated later if needed.
 
 ---
 

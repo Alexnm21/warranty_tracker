@@ -165,6 +165,27 @@ class ReminderSettingsCubit extends Cubit<ReminderSettingsState> {
     await refreshPermission();
   }
 
+  /// Prints all pending reminder notifications scheduled by the app.
+  Future<void> debugPrintPendingReminders() async {
+    try {
+      final pending = await _gateway.getPendingReminders();
+      if (pending.isEmpty) {
+        debugPrint('ReminderSettingsCubit: no pending reminders scheduled.');
+        return;
+      }
+      debugPrint('ReminderSettingsCubit: ${pending.length} pending reminders:');
+      for (final item in pending) {
+        debugPrint(
+          '  id=${item.id} title=${item.title} body=${item.body} payload=${item.payload}',
+        );
+      }
+    } on Exception catch (error) {
+      debugPrint(
+        'ReminderSettingsCubit: could not fetch pending reminders: $error',
+      );
+    }
+  }
+
   Future<void> _persist(
     ReminderSettings settings, {
     String errorKey = 'settings.reminders.error.save',

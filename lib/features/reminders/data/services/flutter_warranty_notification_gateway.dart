@@ -151,4 +151,9 @@ class FlutterWarrantyNotificationGateway
 
     return false;
   }
+
+  @override
+  Future<List<PendingNotificationRequest>> getPendingReminders() {
+    return _plugin.pendingNotificationRequests();
+  }
 }

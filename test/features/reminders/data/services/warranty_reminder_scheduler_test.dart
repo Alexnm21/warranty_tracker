@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:warranty_tracker/features/products/domain/entities/product.dart';
 import 'package:warranty_tracker/features/reminders/data/services/warranty_notification_gateway.dart';
@@ -56,6 +57,10 @@ class FakeGateway implements WarrantyNotificationGateway {
 
   @override
   Future<bool> openSystemNotificationSettings() async => true;
+
+  @override
+  Future<List<PendingNotificationRequest>> getPendingReminders() async =>
+      const [];
 }
 
 void main() {
